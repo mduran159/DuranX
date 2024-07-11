@@ -1,9 +1,21 @@
-version: '3.4'
+version: '3.8'
 
 services:
-  catalogdb: 
+  inventorydb: 
     image: postgres
 
-volumes:
-   postgres_catalog:
+  cartdb:
+    image: postgres
 
+  distributedcache:
+    image: redis
+
+  inventory.api:
+    image: ${DOCKER_REGISTRY-}inventoryapi
+    build:
+      context: .
+      dockerfile: Services/Inventory/Inventory.API/Dockerfile
+
+volumes:
+   postgres_inventory:
+   postgres_cart:
