@@ -1,0 +1,13 @@
+﻿global using Cart.API.Models;
+global using BuildingBlocks.CQRS;
+global using Carter;
+global using MediatR;
+global using Mapster;
+global using FluentValidation;
+global using BuildingBlocks.Behaviors;
+global using BuildingBlocks.Exceptions;
+global using Cart.API.Exceptions;
+global using Marten;
+global using Cart.API.Data;
+global using Cart.API.Dtos;
+global using BuildingBlocks.Exceptions.Handler;
