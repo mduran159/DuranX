@@ -4,7 +4,10 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "inventory.api": "StartDebugging"
+        "inventory.api": "StartDebugging",
+        "discount.grpc": "StartDebugging",
+        "ordering.api": "StartDebugging",
+        "yarpapigateway": "StartDebugging"
       }
     }
   }
