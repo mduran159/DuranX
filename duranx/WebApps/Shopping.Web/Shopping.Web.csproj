@@ -1,0 +1,102 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>23a2c03d-b29d-4069-99ea-c1316815ca0a</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+    <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Pages\Index.cshtml.cs~RF247743c2.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+    <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Pages\Cart.cshtml">
+      <DependentUpon>Cart.cshtml</DependentUpon>
+    </Content>
+    <Compile Update="Pages\Cart.cshtml.cs">
+      <DependentUpon>Cart.cshtml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Pages\Checkout.cshtml">
+      <DependentUpon>Checkout.cshtml</DependentUpon>
+    </Content>
+    <Compile Update="Pages\Checkout.cshtml.cs">
+      <DependentUpon>Checkout.cshtml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Pages\Confirmation.cshtml">
+      <DependentUpon>Confirmation.cshtml</DependentUpon>
+    </Content>
+    <Compile Update="Pages\Confirmation.cshtml.cs">
+      <DependentUpon>Confirmation.cshtml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Pages\Contact.cshtml">
+      <DependentUpon>Contact.cshtml</DependentUpon>
+    </Content>
+    <Compile Update="Pages\Contact.cshtml.cs">
+      <DependentUpon>Contact.cshtml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Pages\Error.cshtml">
+      <DependentUpon>Error.cshtml</DependentUpon>
+    </Content>
+    <Compile Update="Pages\Error.cshtml.cs">
+      <DependentUpon>Error.cshtml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Pages\Index.cshtml">
+      <DependentUpon>Index.cshtml</DependentUpon>
+    </Content>
+    <Compile Update="Pages\Index.cshtml.cs">
+      <DependentUpon>Index.cshtml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Pages\OrderList.cshtml">
+      <DependentUpon>OrderList.cshtml</DependentUpon>
+    </Content>
+    <Compile Update="Pages\OrderList.cshtml.cs">
+      <DependentUpon>OrderList.cshtml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Pages\Privacy.cshtml">
+      <DependentUpon>Privacy.cshtml</DependentUpon>
+    </Content>
+    <Compile Update="Pages\Privacy.cshtml.cs">
+      <DependentUpon>Privacy.cshtml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Pages\ProductDetail.cshtml">
+      <DependentUpon>ProductDetail.cshtml</DependentUpon>
+    </Content>
+    <Compile Update="Pages\ProductDetail.cshtml.cs">
+      <DependentUpon>ProductDetail.cshtml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Pages\ProductList.cshtml">
+      <DependentUpon>ProductList.cshtml</DependentUpon>
+    </Content>
+    <Compile Update="Pages\ProductList.cshtml.cs">
+      <DependentUpon>ProductList.cshtml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>

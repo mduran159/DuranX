@@ -6,8 +6,10 @@
       "serviceActions": {
         "inventory.api": "StartDebugging",
         "discount.grpc": "StartDebugging",
-        "ordering.api": "StartDebugging",
-        "yarpapigateway": "StartDebugging"
+        "order.api": "StartDebugging",
+        "yarpapigateway": "StartDebugging",
+        "shopping.web": "StartDebugging",
+        "identityserver": "StartDebugging"
       }
     }
   }

@@ -1,6 +1,6 @@
 ﻿namespace Inventory.API.Products.CreateProduct
 {
-    public record GetProductByIdResponse(IEnumerable<Product> Products);
+    public record GetProductByIdResponse(Product Product);
 
     public class GetProductByIdEndpoint : ICarterModule
     {

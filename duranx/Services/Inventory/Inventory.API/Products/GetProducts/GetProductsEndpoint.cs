@@ -1,14 +1,16 @@
-﻿namespace Inventory.API.Products.CreateProduct
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Inventory.API.Products.CreateProduct
 {
     public record GetProductsRequest(int? PageNumber = 1, int? PageSize = 10);
 
     public record GetProductsResponse(IEnumerable<Product> Products);
 
-    public class GetProductssEndpoint : ICarterModule
+    public class GetProductsEndpoint : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/products", async ([AsParameters] GetProductsRequest request, ISender sender) =>
+            app.MapGet("/products", [Authorize(Policy = "ApiScope")] async ([AsParameters] GetProductsRequest request, ISender sender, HttpContext httpContext) =>
             {
                 var query = request.Adapt<GetProductsQuery>();
 

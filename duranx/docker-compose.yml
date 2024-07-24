@@ -2,17 +2,8 @@ services:
   inventorydb: 
     image: postgres
 
-  cartdb:
-    image: postgres
-
-  distributedcache:
-    image: redis
-
-  orderdb:
+  identityserverdb:
     image: mcr.microsoft.com/mssql/server
-
-  messagebroker:
-    image: rabbitmq:management
 
   inventory.api:
     image: ${DOCKER_REGISTRY-}inventoryapi
@@ -20,32 +11,11 @@ services:
       context: .
       dockerfile: Services/Inventory/Inventory.API/Dockerfile
 
-  cart.api:
-    image: ${DOCKER_REGISTRY-}cartapi
+  identityserver:
+    image: ${DOCKER_REGISTRY-}identityserver
     build:
       context: .
-      dockerfile: Services/Cart/Cart.API/Dockerfile
-
-  discount.grpc:
-    image: ${DOCKER_REGISTRY-}discountgrpc
-    build:
-      context: .
-      dockerfile: Services/Discount/Discount.Grpc/Dockerfile
-
-  order.api:
-    image: ${DOCKER_REGISTRY-}orderapi
-    build:
-      context: .
-      dockerfile: Services/Ordering/Ordering.API/Dockerfile
-
-  yarpapigateway:
-    image: ${DOCKER_REGISTRY-}yarpapigateway
-    build:
-      context: .
-      dockerfile: ApiGateways/YarpApiGateway/Dockerfile
+      dockerfile: Identity/IdentityServer/Dockerfile
 
 volumes:
    postgres_inventory:
-   postgres_cart:
-
-

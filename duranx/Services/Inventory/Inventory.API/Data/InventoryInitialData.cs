@@ -1,5 +1,4 @@
-﻿using Inventory.API.Models;
-using Marten.Schema;
+﻿using Marten.Schema;
 
 namespace Inventory.API.Data;
 
