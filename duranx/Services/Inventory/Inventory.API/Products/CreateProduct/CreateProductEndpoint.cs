@@ -1,4 +1,6 @@
-﻿namespace Inventory.API.Products.CreateProduct
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Inventory.API.Products.CreateProduct
 {
     public record CreateProductRequest(Guid Id, string Name, List<string> Category, string Description, string ImageFile, decimal Price);
     public record CreateProductResponse(Guid Id);
@@ -7,7 +9,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapPost("/products", async (CreateProductRequest request, ISender sender) =>
+            app.MapPost("/products", [Authorize(Policy = "InventoryWritable")] async (CreateProductRequest request, ISender sender) =>
             {
                 var command = request.Adapt<CreateProdctCommand>();
 

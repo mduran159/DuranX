@@ -1,10 +1,18 @@
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
 var assembly = typeof(Program).Assembly;
+var configuration = builder.Configuration;
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
+IdentityModelEventSource.ShowPII = true;
 
 builder.Services.AddCarter();
 builder.Services.AddMediatR(config =>
@@ -18,7 +26,7 @@ builder.Services.AddValidatorsFromAssembly(assembly);
 
 builder.Services.AddMarten(opts =>
 {
-    opts.Connection(builder.Configuration.GetConnectionString("Database")!);
+    opts.Connection(configuration.GetConnectionString("Database")!);
 }).UseLightweightSessions();
 
 //If environment is development then insert initial data
@@ -27,13 +35,13 @@ if (builder.Environment.IsDevelopment())
 
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 
-builder.Services.AddHealthChecks().AddNpgSql(builder.Configuration.GetConnectionString("Database")!);
-
+builder.Services.AddHealthChecks().AddNpgSql(configuration.GetConnectionString("Database")!);
+IdentityModelEventSource.ShowPII = true;
 //Identity
 builder.Services.AddOpenIddict()
     .AddValidation(options =>
     {
-        options.SetIssuer("https://localhost:5056/");
+        options.SetIssuer(new Uri(configuration.GetSection("OpenIddict:Issuer").Value!));
         options.UseSystemNetHttp();
         options.UseAspNetCore();
     });
@@ -46,25 +54,39 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.Authority = "https://localhost:5056"; // URL del servidor de identidad
-    options.Audience = "inventoryAudience"; // El recurso que esta API representa
-    options.RequireHttpsMetadata = false; // Solo para desarrollo
+    var jwtBearerConfig = configuration.GetSection("JwtBearer");
+    options.Authority = jwtBearerConfig["Authority"];
+    options.Audience = jwtBearerConfig["Audience"];
+    options.RequireHttpsMetadata = true;
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidAudience = "inventoryAudience",
-         ValidIssuer = "https://localhost:5056",
+        ValidAudience = jwtBearerConfig["Audience"],
+        ValidIssuer = jwtBearerConfig["Authority"],
+        IssuerSigningKey = new X509SecurityKey(new X509Certificate2(
+            jwtBearerConfig.GetSection("Certificates:Signing:Path").Value!,
+            jwtBearerConfig.GetSection("Certificates:Signing:Password").Value!
+        )),
+        TokenDecryptionKey = new X509SecurityKey(new X509Certificate2(
+            jwtBearerConfig.GetSection("Certificates:Encryption:Path").Value!,
+            jwtBearerConfig.GetSection("Certificates:Encryption:Password").Value!
+        ))
     };
 });
 
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("ApiScope", policy =>
+    options.AddPolicy("InventoryReadable", policy =>
     {
-        policy.RequireClaim("scope", "inventoryScope");
+        policy.RequireClaim("scope", "read_inventory");
+    });
+
+    options.AddPolicy("InventoryWritable", policy =>
+    {
+        policy.RequireClaim("scope", "write_inventory");
     });
 });
 

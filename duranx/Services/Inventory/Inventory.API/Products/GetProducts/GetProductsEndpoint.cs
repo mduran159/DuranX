@@ -10,7 +10,7 @@ namespace Inventory.API.Products.CreateProduct
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/products", [Authorize(Policy = "ApiScope")] async ([AsParameters] GetProductsRequest request, ISender sender, HttpContext httpContext) =>
+            app.MapGet("/products", [Authorize(Policy = "InventoryReadable")] async ([AsParameters] GetProductsRequest request, ISender sender, HttpContext httpContext) =>
             {
                 var query = request.Adapt<GetProductsQuery>();
 

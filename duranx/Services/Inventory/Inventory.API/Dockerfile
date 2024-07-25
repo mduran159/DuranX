@@ -23,10 +23,18 @@ RUN dotnet publish "./Inventory.API.csproj" -c $BUILD_CONFIGURATION -o /app/publ
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-# Copy the identityserver-signing.crt certificate to the /etc/ca-certificates directory
-COPY myflag.txt /root/myflag.txt
 
-# Update the CA certificates
+# Cambiar al usuario root temporalmente para copiar el certificado y actualizar certificados
+USER root
+
+WORKDIR /app
+# Copiar el certificado CRT al contenedor
+COPY Certificates/ /usr/local/share/ca-certificates/
+
+# Actualizar el almacén de certificados de CA
 RUN update-ca-certificates
+
+# Cambiar de vuelta al usuario app
+USER app
 
 ENTRYPOINT ["dotnet", "Inventory.API.dll"]

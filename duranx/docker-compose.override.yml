@@ -30,6 +30,12 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=inventorydb;Port=5432;Database=InventoryDb;User Id=postgres;Password=postgres;Include Error Detail=true
+      - OpenIddict__Issuer=https://identityserver:8081/
+      - JwtBearer__Authority=https://identityserver:8081/
+      - JwtBearer__Certificates__Signing__Path=/usr/local/share/ca-certificates/identityserverSigning.pfx
+      - JwtBearer__Certificates__Signing__Password=duranxpassword
+      - JwtBearer__Certificates__Encryption__Path=/usr/local/share/ca-certificates/encryption.pfx
+      - JwtBearer__Certificates__Encryption__Password=duranxpassword
     ports:
       - "6000:8080"
       - "6060:8081"
@@ -38,6 +44,8 @@ services:
       - identityserver
     volumes:
       - C:\Users\User\Documents\NetProjects\duranx\Certificates:/app/certificates
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     networks:
       - mynetwork
 
@@ -47,6 +55,15 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ConnectionStrings__Database=Server=identityserverdb;Database=aspnet-IdentityServer;User Id=sa;Password=Admin12345678!;Encrypt=False;TrustServerCertificate=True
+      - OpenIddict__Issuer=https://identityserver:8081/
+      - OpenIddict__AuthorizationEndpointUri=connect/authorize
+      - OpenIddict__LogoutEndpointUri=connect/logout
+      - OpenIddict__TokenEndpointUri=connect/token
+      - OpenIddict__Scopes[]=inventoryScope
+      - OpenIddict__Certificates__Signing__Path=/usr/local/share/ca-certificates/identityserverSigning.pfx
+      - OpenIddict__Certificates__Signing__Password=duranxpassword
+      - OpenIddict__Certificates__Encryption__Path=/usr/local/share/ca-certificates/encryption.pfx
+      - OpenIddict__Certificates__Encryption__Password=duranxpassword
     ports:
       - "6006:8080"
       - "6066:8081"
@@ -54,6 +71,8 @@ services:
       - identityserverdb
     volumes:
       - C:\Users\User\Documents\NetProjects\duranx\Certificates:/app/certificates
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     networks:
       - mynetwork
 

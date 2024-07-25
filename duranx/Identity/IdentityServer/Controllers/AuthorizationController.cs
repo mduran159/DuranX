@@ -337,7 +337,6 @@ public class AuthorizationController : Controller
         }
 
         if (request.IsAuthorizationCodeGrantType() ||
-            request.IsDeviceCodeGrantType() ||
             request.IsRefreshTokenGrantType())
         {
             // Retrieve the claims principal stored in the authorization code/device code/refresh token.

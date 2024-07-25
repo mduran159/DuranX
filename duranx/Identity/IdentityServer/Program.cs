@@ -1,9 +1,18 @@
 using IdentityServer.Data;
+using IdentityServer.Extensions;
 using IdentityServer.HostedServices;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Logging;
+using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
+IdentityModelEventSource.ShowPII = true;
+IdentityModelEventSource.LogCompleteSecurityArtifact = true;
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("Database")
@@ -28,36 +37,35 @@ builder.Services.AddOpenIddict()
     })
     .AddServer(options =>
     {
-        options.AllowClientCredentialsFlow();
+        var openIddictConfig = builder.Configuration.GetSection("OpenIddict");
 
-        options.SetAuthorizationEndpointUris("connect/authorize")
-               .SetLogoutEndpointUris("connect/logout")
-               .SetTokenEndpointUris("connect/token");
+        options.AllowClientCredentialsFlow()
+               .AllowAuthorizationCodeFlow()
+               .AllowRefreshTokenFlow();
 
-        options.RegisterScopes("inventoryScope");
+        options.SetIssuer(new Uri(openIddictConfig["Issuer"]));
 
-        options.AddEphemeralSigningKey();
-        options.AddEphemeralEncryptionKey();
-        options.DisableAccessTokenEncryption();
+        options.SetAuthorizationEndpointUris(openIddictConfig["AuthorizationEndpointUri"])
+               .SetLogoutEndpointUris(openIddictConfig["LogoutEndpointUri"])
+               .SetTokenEndpointUris(openIddictConfig["TokenEndpointUri"]);
 
-        // Enable necessary flows
-        options.AllowClientCredentialsFlow();
-        options.AllowAuthorizationCodeFlow();
+        options.RegisterScopes(openIddictConfig.GetSection("Scopes").Get<string[]>());
 
-        // Register the ASP.NET Core host and configure the ASP.NET Core-specific options.
+        var signingCertificate = openIddictConfig.GetSection("Certificates:Signing");
+        var encryptionCertificate = openIddictConfig.GetSection("Certificates:Encryption");
+        options.AddSigningCertificate(new X509Certificate2(signingCertificate["Path"], signingCertificate["Password"]))
+               .AddEncryptionCertificate(new X509Certificate2(encryptionCertificate["Path"], encryptionCertificate["Password"]));
+
         options.UseAspNetCore()
-            .EnableAuthorizationEndpointPassthrough()
-            .EnableLogoutEndpointPassthrough()
-            .EnableTokenEndpointPassthrough();
+               .EnableAuthorizationEndpointPassthrough()
+               .EnableLogoutEndpointPassthrough()
+               .EnableTokenEndpointPassthrough();
     })
     .AddValidation(options =>
     {
-        // Import the configuration from the local OpenIddict server instance.
         options.UseLocalServer();
-
-        // Register the ASP.NET Core host.
         options.UseAspNetCore();
-    }); ;
+    });
 
 builder.Services.AddHostedService<InventoryService>();
 
@@ -91,5 +99,10 @@ app.UseEndpoints(options =>
 });
 
 app.UseCors();
+
+if (app.Environment.IsDevelopment())
+{
+    await app.InitializeDatabaseAsync();
+}
 
 app.Run();

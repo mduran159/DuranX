@@ -31,18 +31,27 @@ namespace IdentityServer.HostedServices
                     {
                         Permissions.Endpoints.Token,
                         Permissions.GrantTypes.ClientCredentials,
-                        "scp:inventoryScope"
+                        "scp:read_inventory",
+                        "scp:write_inventory"
                     }
                 });
             }
 
             // Ensure the scope exists
-            if (await scopeManager.FindByNameAsync("inventoryScope") is null)
+            if (await scopeManager.FindByNameAsync("read_inventory") is null)
             {
                 await scopeManager.CreateAsync(new OpenIddictScopeDescriptor
                 {
-                    Name = "inventoryScope",
-                    Description = "A scope for Inventory API access."
+                    Name = "read_inventory",
+                    Description = "A scope for read data from Inventory API."
+                });
+            }
+            if (await scopeManager.FindByNameAsync("write_inventory") is null)
+            {
+                await scopeManager.CreateAsync(new OpenIddictScopeDescriptor
+                {
+                    Name = "write_inventory",
+                    Description = "A scope for write data from Inventory API."
                 });
             }
         }

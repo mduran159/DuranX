@@ -1,4 +1,6 @@
-﻿namespace Inventory.API.Products.CreateProduct
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Inventory.API.Products.CreateProduct
 {
     public record GetProductByCategoryResponse(IEnumerable<Product> Products);
 
@@ -6,7 +8,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/products/category/{category}", async (string category, ISender sender) =>
+            app.MapGet("/products/category/{category}", [Authorize(Policy = "InventoryReadable")] async (string category, ISender sender) =>
             {
                 var result = await sender.Send(new GetProductByCategoryQuery(category));
 

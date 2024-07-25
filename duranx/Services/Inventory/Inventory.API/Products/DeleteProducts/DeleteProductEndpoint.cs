@@ -1,4 +1,6 @@
-﻿namespace Inventory.API.Products.DeleteProduct
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Inventory.API.Products.DeleteProduct
 {
     public record DeleteProductRequest(Guid Id, string Name, List<string> Category, string Description, string ImageFile, decimal Price);
     public record DeleteProductResponse(bool IsSuccess);
@@ -7,7 +9,7 @@
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapDelete("/products/{id}", async (Guid id, ISender sender) =>
+            app.MapDelete("/products/{id}", [Authorize(Policy = "InventoryWritable")] async (Guid id, ISender sender) =>
             {
                 var result = await sender.Send(new DeleteProdctCommand(id));
 

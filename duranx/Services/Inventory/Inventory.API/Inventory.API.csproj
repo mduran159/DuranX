@@ -24,13 +24,4 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlocks\BuildingBlocks.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="C:\Users\User\Documents\NetProjects\duranx\Certificates\identityserver-signing.crt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="C:\Users\User\Documents\NetProjects\duranx\Certificates\encryption.crt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
 </Project>
