@@ -4,11 +4,11 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace IdentityServer.HostedServices
 {
-    public class InventoryService : IHostedService
+    public class CartService : IHostedService
     {
         private readonly IServiceProvider _serviceProvider;
 
-        public InventoryService(IServiceProvider serviceProvider)
+        public CartService(IServiceProvider serviceProvider)
             => _serviceProvider = serviceProvider;
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -20,38 +20,38 @@ namespace IdentityServer.HostedServices
             var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
             var scopeManager = scope.ServiceProvider.GetRequiredService<IOpenIddictScopeManager>();
 
-            if (await manager.FindByClientIdAsync("inventory_client") is null)
+            if (await manager.FindByClientIdAsync("cart_client") is null)
             {
                 await manager.CreateAsync(new OpenIddictApplicationDescriptor
                 {
-                    ClientId = "inventory_client",
-                    ClientSecret = "388D45FA-B36B-4988-BA59-B187D329C207",
-                    DisplayName = "Inventory Service",
+                    ClientId = "cart_client",
+                    ClientSecret = "388D45FA-B36B-4988-BA59-B187D329C208",
+                    DisplayName = "Cart Service",
                     Permissions =
                     {
                         Permissions.Endpoints.Token,
                         Permissions.GrantTypes.ClientCredentials,
-                        "scp:read_inventory",
-                        "scp:write_inventory"
+                        "scp:read_cart",
+                        "scp:write_cart"
                     }
                 });
             }
 
             // Ensure the scope exists
-            if (await scopeManager.FindByNameAsync("read_inventory") is null)
+            if (await scopeManager.FindByNameAsync("read_cart") is null)
             {
                 await scopeManager.CreateAsync(new OpenIddictScopeDescriptor
                 {
-                    Name = "read_inventory",
-                    Description = "A scope for read data from Inventory API."
+                    Name = "read_cart",
+                    Description = "A scope for read data from Cart API."
                 });
             }
-            if (await scopeManager.FindByNameAsync("write_inventory") is null)
+            if (await scopeManager.FindByNameAsync("write_cart") is null)
             {
                 await scopeManager.CreateAsync(new OpenIddictScopeDescriptor
                 {
-                    Name = "write_inventory",
-                    Description = "A scope for write data from Inventory API."
+                    Name = "write_cart",
+                    Description = "A scope for write data from Cart API."
                 });
             }
         }

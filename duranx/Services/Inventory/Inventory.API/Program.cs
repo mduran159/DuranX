@@ -1,9 +1,6 @@
 using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
 var assembly = typeof(Program).Assembly;
@@ -36,59 +33,59 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 
 builder.Services.AddHealthChecks().AddNpgSql(configuration.GetConnectionString("Database")!);
-IdentityModelEventSource.ShowPII = true;
-//Identity
-builder.Services.AddOpenIddict()
-    .AddValidation(options =>
-    {
-        options.SetIssuer(new Uri(configuration.GetSection("OpenIddict:Issuer").Value!));
-        options.UseSystemNetHttp();
-        options.UseAspNetCore();
-    });
 
-// Configurar la autenticación global usando OpenIddict
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    var jwtBearerConfig = configuration.GetSection("JwtBearer");
-    options.Authority = jwtBearerConfig["Authority"];
-    options.Audience = jwtBearerConfig["Audience"];
-    options.RequireHttpsMetadata = true;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidAudience = jwtBearerConfig["Audience"],
-        ValidIssuer = jwtBearerConfig["Authority"],
-        IssuerSigningKey = new X509SecurityKey(new X509Certificate2(
-            jwtBearerConfig.GetSection("Certificates:Signing:Path").Value!,
-            jwtBearerConfig.GetSection("Certificates:Signing:Password").Value!
-        )),
-        TokenDecryptionKey = new X509SecurityKey(new X509Certificate2(
-            jwtBearerConfig.GetSection("Certificates:Encryption:Path").Value!,
-            jwtBearerConfig.GetSection("Certificates:Encryption:Password").Value!
-        ))
-    };
-});
+////Identity
+//builder.Services.AddOpenIddict()
+//    .AddValidation(options =>
+//    {
+//        options.SetIssuer(new Uri(configuration.GetSection("OpenIddict:Issuer").Value!));
+//        options.UseSystemNetHttp();
+//        options.UseAspNetCore();
+//    });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("InventoryReadable", policy =>
-    {
-        policy.RequireClaim("scope", "read_inventory");
-    });
+//// Configurar la autenticación global usando OpenIddict
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//})
+//.AddJwtBearer(options =>
+//{
+//    var jwtBearerConfig = configuration.GetSection("JwtBearer");
+//    options.Authority = jwtBearerConfig["Authority"];
+//    options.Audience = jwtBearerConfig["Audience"];
+//    options.RequireHttpsMetadata = true;
+//    options.TokenValidationParameters = new TokenValidationParameters
+//    {
+//        ValidateIssuer = true,
+//        ValidateAudience = true,
+//        ValidateLifetime = true,
+//        ValidateIssuerSigningKey = true,
+//        ValidAudience = jwtBearerConfig["Audience"],
+//        ValidIssuer = jwtBearerConfig["Authority"],
+//        IssuerSigningKey = new X509SecurityKey(new X509Certificate2(
+//            jwtBearerConfig.GetSection("Certificates:Signing:Path").Value!,
+//            jwtBearerConfig.GetSection("Certificates:Signing:Password").Value!
+//        )),
+//        TokenDecryptionKey = new X509SecurityKey(new X509Certificate2(
+//            jwtBearerConfig.GetSection("Certificates:Encryption:Path").Value!,
+//            jwtBearerConfig.GetSection("Certificates:Encryption:Password").Value!
+//        ))
+//    };
+//});
 
-    options.AddPolicy("InventoryWritable", policy =>
-    {
-        policy.RequireClaim("scope", "write_inventory");
-    });
-});
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.AddPolicy("InventoryReadable", policy =>
+//    {
+//        policy.RequireClaim("scope", "read_inventory");
+//    });
+
+//    options.AddPolicy("InventoryWritable", policy =>
+//    {
+//        policy.RequireClaim("scope", "write_inventory");
+//    });
+//});
 
 var app = builder.Build();
 

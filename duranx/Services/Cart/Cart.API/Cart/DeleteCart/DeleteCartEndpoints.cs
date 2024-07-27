@@ -1,4 +1,6 @@
-﻿namespace Cart.API.Cart.DeleteCart;
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Cart.API.Cart.DeleteCart;
 
 //public record DeleteCartRequest(string UserName);
 public record DeleteCartResponse(bool IsSuccess);
@@ -7,7 +9,7 @@ public class DeleteCartEndpoints : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapDelete("/cart/{userName}", async (string userName, ISender sender) =>
+        app.MapDelete("/cart/{userName}", [Authorize(Policy = "CartWritable")] async (string userName, ISender sender) =>
         {
             var result = await sender.Send(new DeleteCartCommand(userName));
 

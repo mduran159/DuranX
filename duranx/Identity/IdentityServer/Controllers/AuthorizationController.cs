@@ -318,7 +318,7 @@ public class AuthorizationController : Controller
             identity.SetClaim(Claims.Name, await _applicationManager.GetDisplayNameAsync(application));
 
             // Add the audience claim
-            identity.SetClaim(Claims.Audience, $"{request.ClientId.Replace("Client", String.Empty)}Audience");
+            identity.SetClaim(Claims.Audience, request.ClientId.Replace("client", "audience"));
 
             // Note: In the original OAuth 2.0 specification, the client credentials grant
             // doesn't return an identity token, which is an OpenID Connect concept.

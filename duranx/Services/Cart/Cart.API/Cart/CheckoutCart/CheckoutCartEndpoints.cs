@@ -1,4 +1,6 @@
-﻿namespace Cart.API.Cart.CheckoutCart;
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Cart.API.Cart.CheckoutCart;
 
 public record CheckoutCartRequest(CartCheckoutDto CartCheckoutDto);
 public record CheckoutCartResponse(bool IsSuccess);
@@ -7,7 +9,7 @@ public class CheckoutCartEndpoints : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/cart/checkout", async (CheckoutCartRequest request, ISender sender) =>
+        app.MapPost("/cart/checkout", [Authorize(Policy = "CartWritable")] async (CheckoutCartRequest request, ISender sender) =>
         {
             var command = request.Adapt<CheckoutCartCommand>();
 

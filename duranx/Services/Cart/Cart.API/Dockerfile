@@ -23,4 +23,18 @@ RUN dotnet publish "./Cart.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Cambiar al usuario root temporalmente para copiar el certificado y actualizar certificados
+USER root
+
+WORKDIR /app
+# Copiar el certificado CRT al contenedor
+COPY Certificates/ /usr/local/share/ca-certificates/
+
+# Actualizar el almacén de certificados de CA
+RUN update-ca-certificates
+
+# Cambiar de vuelta al usuario app
+USER app
+
 ENTRYPOINT ["dotnet", "Cart.API.dll"]

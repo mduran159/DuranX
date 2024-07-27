@@ -68,6 +68,7 @@ builder.Services.AddOpenIddict()
     });
 
 builder.Services.AddHostedService<InventoryService>();
+builder.Services.AddHostedService<CartService>();
 
 builder.Services.AddRazorPages();
 
