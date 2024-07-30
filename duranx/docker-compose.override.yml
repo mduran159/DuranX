@@ -1,62 +1,21 @@
 services:
-  # identityserverdb:
-  #   container_name: identityserverdb
-  #   environment:
-  #     - ACCEPT_EULA=Y
-  #     - SA_PASSWORD=Admin12345678!
-  #   restart: always
-  #   ports:
-  #     - "1433:1433"
-  #   networks:
-  #     - mynetwork
+  cartdb:
+    container_name: cartdb
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=CartDb
+    restart: always
+    ports:
+        - "5433:5432"
+    volumes:
+      - postgres_cart:/var/lib/postgresql/data/ 
+    networks:
+      - mynetwork
 
-  # inventorydb:
-  #   container_name: inventorydb
-  #   environment:
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=postgres
-  #     - POSTGRES_DB=InventoryDb
-  #   restart: always
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - postgres_inventory:/var/lib/postgresql/data/
-  #   networks:
-  #     - mynetwork
-
-  # cartdb:
-  #   container_name: cartdb
-  #   environment:
-  #     - POSTGRES_USER=postgres
-  #     - POSTGRES_PASSWORD=postgres
-  #     - POSTGRES_DB=CartDb
-  #   restart: always
-  #   ports:
-  #       - "5433:5432"
-  #   volumes:
-  #     - postgres_cart:/var/lib/postgresql/data/ 
-  #   networks:
-  #     - mynetwork
-
-  # distributedcache:
-  #   container_name: distributedcache
-  #   restart: always
-  #   ports:
-  #     - "6379:6379"
-  #   networks:
-  #     - mynetwork
-  #   volumes:
-  #     - C:\Users\User\Documents\NetProjects\duranx\Certificates\ca-certificate.crt:/usr/local/etc/redis/ca-certificate.crt
-  #     - C:\Users\User\Documents\NetProjects\duranx\Certificates\redis-server-cert.pem:/usr/local/etc/redis/redis-server-cert.pem
-  #     - C:\Users\User\Documents\NetProjects\duranx\Certificates\redis-server-key.pem:/usr/local/etc/redis/redis-server-key.pem
-  #     - C:\Users\User\Documents\NetProjects\duranx\Redis\redis.conf:/usr/local/etc/redis/redis.conf
-  #     - C:\Users\User\Documents\NetProjects\duranx\Redis\Data:/var/lib/redis
-  #     - C:\Users\User\Documents\NetProjects\duranx\Redis\Logs:/var/log/redis
-  #   command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
-
-  messagebroker:
-    container_name: messagebroker
-    hostname: messagebroker
+  rabbitmq:
+    container_name: rabbitmq
+    hostname: rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
@@ -72,81 +31,34 @@ services:
       - mynetwork
     command: rabbitmq-server --ssl
 
-        # identityserver:
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-  #     - ASPNETCORE_HTTP_PORTS=8080
-  #     - ASPNETCORE_HTTPS_PORTS=8081
-  #     - ConnectionStrings__Database=Server=identityserverdb;Database=aspnet-IdentityServer;User Id=sa;Password=Admin12345678!;Encrypt=False;TrustServerCertificate=True
-  #     - OpenIddict__Issuer=https://identityserver:8081/
-  #     - OpenIddict__AuthorizationEndpointUri=connect/authorize
-  #     - OpenIddict__LogoutEndpointUri=connect/logout
-  #     - OpenIddict__TokenEndpointUri=connect/token
-  #     - OpenIddict__Scopes[]=inventoryScope
-  #     - OpenIddict__Certificates__Signing__Path=/usr/local/share/ca-certificates/identityserver-signing.pfx
-  #     - OpenIddict__Certificates__Signing__Password=duranxpassword
-  #     - OpenIddict__Certificates__Encryption__Path=/usr/local/share/ca-certificates/identityserver-encryption.pfx
-  #     - OpenIddict__Certificates__Encryption__Password=duranxpassword
-  #   ports:
-  #     - "6006:8080"
-  #     - "6066:8081"
-  #   depends_on:
-  #     - identityserverdb
-  #   volumes:
-  #     - C:\Users\User\Documents\NetProjects\duranx\Certificates:/app/certificates
-  #     - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-  #     - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-  #   networks:
-  #     - mynetwork
-
-  # inventory.api:
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-  #     - ASPNETCORE_HTTP_PORTS=8080
-  #     - ASPNETCORE_HTTPS_PORTS=8081
-  #     - ConnectionStrings__Database=Server=inventorydb;Port=5432;Database=InventoryDb;User Id=postgres;Password=postgres;Include Error Detail=true
-  #     - OpenIddict__Issuer=https://identityserver:8081/
-  #     - JwtBearer__Authority=https://identityserver:8081/
-  #     - JwtBearer__Certificates__Signing__Path=/usr/local/share/ca-certificates/identityserver-signing.pfx
-  #     - JwtBearer__Certificates__Signing__Password=duranxpassword
-  #     - JwtBearer__Certificates__Encryption__Path=/usr/local/share/ca-certificates/identityserver-encryption.pfx
-  #     - JwtBearer__Certificates__Encryption__Password=duranxpassword
-  #   ports:
-  #     - "6000:8080"
-  #     - "6060:8081"
-  #   depends_on:
-  #     - inventorydb
-  #     - identityserver
-  #   volumes:
-  #     - C:\Users\User\Documents\NetProjects\duranx\Certificates:/app/certificates
-  #     - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-  #     - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-  #   networks:
-  #     - mynetwork
-
-  # cart.api:
-  #   environment:
-  #     - aspnetcore_environment=development
-  #     - aspnetcore_http_ports=8080
-  #     - aspnetcore_https_ports=8081
-  #     - connectionstrings__database=server=cartdb;port=5432;database=cartdb;user id=postgres;password=postgres;include error detail=true
-  #     - messagebroker__host=rabbitmqs://messagebroker:5671
-  #     - messagebroker__username=guest
-  #     - messagebroker__password=guest
-  #     - messagebroker__certificate__path=/usr/local/share/ca-certificates/server.pfx
-  #     - messagebroker__certificate__password=duranxpassword
-  #   ports:
-  #     - "6001:8080"
-  #     - "6061:8081"
-  #   depends_on:
-  #     - cartdb
-  #     - messagebroker
-  #   volumes:
-  #     - c:\users\user\documents\netprojects\duranx\certificates:/app/certificates
-  #     - ${appdata}/microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
-  #     - ${appdata}/asp.net/https:/home/app/.aspnet/https:ro
-  #   networks:
-  #     - mynetwork
+  webapi:
+    environment:
+      - aspnetcore_environment=development
+      - aspnetcore_http_ports=8080
+      - aspnetcore_https_ports=8081
+      - connectionstrings__database=server=cartdb;port=5432;database=cartdb;user id=postgres;password=postgres;include error detail=true
+      - messagebroker__host=amqps://rabbitmq:5671
+      - messagebroker__username=guest
+      - messagebroker__password=guest
+      - messagebroker__certificate__path=/usr/local/share/ca-certificates/webapi.p12
+      - messagebroker__certificate__password=duranxpassword
+      - rabbitmq__hostname=rabbitmq
+      - rabbitmq__servername=rabbitmq
+      - rabbitmq__certpath=/usr/local/share/ca-certificates/webapi.p12
+      - rabbitmq__certpassphrase=duranxpassword
+      - rabbitmq__username=guest
+      - rabbitmq__password=guest
+    ports:
+      - "6001:8080"
+      - "6061:8081"
+    depends_on:
+      - rabbitmq
+    volumes:
+      - c:\users\user\documents\netprojects\duranx\certificates:/app/certificates
+      - ${appdata}/microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+      - ${appdata}/asp.net/https:/home/app/.aspnet/https:ro
+    networks:
+      - mynetwork
 
 networks:
   mynetwork:

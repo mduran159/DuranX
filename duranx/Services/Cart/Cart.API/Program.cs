@@ -1,10 +1,9 @@
-using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using BuildingBlocks.Messaging.MassTransit;
+using Cart.API;
 using Microsoft.IdentityModel.Logging;
 
 //wait for rabbit mq server to start to avoid it throw error logs
-await Task.Delay(10000);
+await Task.Delay(8000);
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +33,42 @@ builder.Services.AddMarten(opts =>
 
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.Decorate<ICartRepository, CachedCartRepository>();
+
+
+
+
+
+
+
+
+//builder.Services.AddTransient<RabbitMQStartup>();
+//builder.Services.AddTransient<IRabbitMQ, RabbitMQWithSSL>();
+
+//builder.Services.AddOptions<RabbitMQOptions>()
+//              .Configure<IConfiguration>((options, configuration) =>
+//              {
+//                  configuration.GetSection(RabbitMQOptions.SectionName).Bind(options);
+//              });
+
+//builder.Services.AddOptions<LoggerOptions>()
+//             .Configure<IConfiguration>((options, configuration) =>
+//             {
+//                 configuration.GetSection(LoggerOptions.SectionName).Bind(options);
+//             });
+//builder.Services.AddSingleton(typeof(BuildingBlocks.Messaging.MassTransit.Interfaces.ILogger), typeof(ConsoleLogger));
+
+
+
+
+//Async communication services
+builder.Services.AddMessageBroker(builder.Configuration);
+
+
+
+
+
+
+
 
 //var redisCertPath = builder.Configuration["Redis:CertPath"];
 //var redisCertPassword = builder.Configuration["Redis:CertPassword"];
@@ -67,9 +102,6 @@ builder.Services.Decorate<ICartRepository, CachedCartRepository>();
 
 //    return handler;
 //});
-
-//Async communication services
-builder.Services.AddMessageBroker(builder.Configuration);
 
 //Cross-Cutting Services
 builder.Services.AddExceptionHandler<ExceptionHandler>();
@@ -136,10 +168,13 @@ var app = builder.Build();
 //Middleware
 app.MapCarter();
 app.UseExceptionHandler(options => { });
-app.UseHealthChecks("/health",
-    new HealthCheckOptions
-    {
-        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-    });
+
+//var rabbitMQSartup = app.Services.GetRequiredService<RabbitMQStartup>();
+//rabbitMQSartup.Run();
+//app.UseHealthChecks("/health",
+//    new HealthCheckOptions
+//    {
+//        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+//    });
 
 app.Run();

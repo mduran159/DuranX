@@ -397,8 +397,9 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-#Exclde certificates
-duranx/Services/Cart/Cart.API/Certificates/
-duranx/Services/Inventory/Inventory.API/Certificates/
-duranx/Certificates/*
-!duranx/Certificates/createCertificates.ps1
+#Exclude certificates
+/duranx/Identity/IdentityServer/Certificates
+/duranx/Services/Inventory/Inventory.API/Certificates
+/duranx/Services/Cart/Cart.API/Certificates
+/duranx/Certificates
+!/duranx/Certificates/createCertificates.ps1

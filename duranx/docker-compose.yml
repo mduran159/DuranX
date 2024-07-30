@@ -1,36 +1,15 @@
 services:
-  # identityserverdb:
-  #   image: mcr.microsoft.com/mssql/server
-    
-  # inventorydb: 
-  #   image: postgres
+  cartdb:
+    image: postgres
 
-  # cartdb:
-  #   image: postgres
-
-  # distributedcache:
-  #   image: redis:latest
-
-  messagebroker:
+  rabbitmq:
     image: rabbitmq:management
   
-  # identityserver:
-  #   image: ${DOCKER_REGISTRY-}identityserver
-  #   build:
-  #     context: .
-  #     dockerfile: Identity/IdentityServer/Dockerfile
-
-  # inventory.api:
-  #   image: ${DOCKER_REGISTRY-}inventoryapi
-  #   build:
-  #     context: .
-  #     dockerfile: Services/Inventory/Inventory.API/Dockerfile
-
-  # cart.api:
-  #   image: ${DOCKER_REGISTRY-}cartapi
-  #   build:
-  #     context: .
-  #     dockerfile: Services/Cart/Cart.API/Dockerfile
+  webapi:
+    image: ${DOCKER_REGISTRY-}cartapi
+    build:
+      context: .
+      dockerfile: Services/Cart/Cart.API/Dockerfile
 
 volumes:
    postgres_cart:
