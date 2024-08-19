@@ -1,0 +1,36 @@
+﻿@page
+@model AuthorizeModel
+@{
+    ViewData["Title"] = "Authorize Application";
+}
+
+<h1>Authorize Application</h1>
+<h2>Application: @Model.ApplicationName</h2>
+
+@if (Model.Scopes != null && Model.Scopes.Any())
+{
+    <h3>Requested Permissions</h3>
+    <ul>
+        @foreach (var scope in Model.Scopes)
+        {
+            <li>@scope</li>
+        }
+    </ul>
+}
+<p>
+    Please review the requested permissions and authorize or deny the application accordingly.
+</p>
+
+<form method="post" asp-page-handler="Accept">
+    <button type="submit" class="btn btn-primary">Authorize</button>
+</form>
+
+<form method="post" asp-page-handler="Deny">
+    <button type="submit" class="btn btn-secondary">Deny</button>
+</form>
+
+<div>
+    <p>
+        <strong>Note:</strong> If you deny the application, it will not have access to the requested resources.
+    </p>
+</div>

@@ -1,5 +1,5 @@
 ﻿using BuildingBlocks.Behaviors;
-using BuildingBlocks.Messaging.MassTransit;
+using BuildingBlocks.Messaging.RabbitMQ;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.FeatureManagement;
@@ -21,7 +21,7 @@ public static class DependencyInjection
         });
 
         services.AddFeatureManagement();
-        services.AddMessageBroker(configuration, Assembly.GetExecutingAssembly());
+        services.AddRabbitMQ(configuration, Assembly.GetExecutingAssembly());
 
         return services;
     }

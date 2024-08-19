@@ -1,0 +1,40 @@
+﻿@page "/Authorize"
+@model OpeniddictServer.Areas.Identity.Pages.Account.AuthorizeModel
+@Html.AntiForgeryToken()
+
+@{
+    ViewData["Title"] = "Authorize Application";
+}
+
+<h1>Authorize Application</h1>
+<h2>Application: @Model.ApplicationName</h2>
+
+@if (Model.Scopes != null && Model.Scopes.Any())
+{
+    <h3>Requested Permissions</h3>
+    <ul>
+        @foreach (var scope in Model.Scopes.Split(" "))
+        {
+            <li>@scope</li>
+        }
+    </ul>
+}
+
+<p>Please review the requested permissions and authorize or deny the application accordingly.</p>
+
+<form method="post">
+    <input type="hidden" asp-for="ClientId" />
+    <input type="hidden" asp-for="RedirectUri" />
+    <input type="hidden" asp-for="ResponseType" />
+    <input type="hidden" asp-for="Scopes" />
+    <input type="hidden" asp-for="State" />
+    <input type="hidden" asp-for="ApplicationName" />
+    <button type="submit" asp-page-handler="Accept" asp-route-returnUrlQueryString="@Model.ReturnUrlQueryString" value="true" name="Decision" class="btn btn-primary">Authorize</button>
+    <button type="submit" asp-page-handler="Deny" asp-route-returnUrlQueryString="@Model.ReturnUrlQueryString" value="false" name="Decision" class="btn btn-secondary">Deny</button>
+</form>
+
+<div>
+    <p>
+        <strong>Note:</strong> If you deny the application, it will not have access to the requested resources.
+    </p>
+</div>

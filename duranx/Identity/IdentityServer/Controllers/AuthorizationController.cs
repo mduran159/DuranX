@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
 using IdentityServer.Extensions;
 using IdentityServer.Attributes;
-using IdentityServer.Models;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -44,7 +43,7 @@ public class AuthorizationController : Controller
     {
         var request = HttpContext.GetOpenIddictServerRequest() ??
             throw new InvalidOperationException("The OpenID Connect request cannot be retrieved.");
-
+        
         // If prompt=login was specified by the client application,
         // immediately return the user agent to the login page.
         if (request.HasPrompt(Prompts.Login))
@@ -98,8 +97,22 @@ public class AuthorizationController : Controller
         }
 
         // Retrieve the profile of the logged in user.
-        var user = await _userManager.GetUserAsync(result.Principal) ??
-            throw new InvalidOperationException("The user details cannot be retrieved.");
+        var user = await _userManager.GetUserAsync(result.Principal);
+
+        if (user is null)
+        {
+            // Obtener la URL de redirección original con todos los parámetros
+            var returnUrl = Request.QueryString.ToString();
+
+            // Redirigir al usuario a la página de inicio de sesión con la URL de retorno
+            var loginUrl = $"/Identity/Account/Login?ReturnUrl={returnUrl}";
+
+            // Cerrar sesión del usuario
+            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+
+            // Redirigir al usuario a la página de inicio de sesión con parámetros
+            return Redirect(loginUrl);
+        }
 
         // Retrieve the application details from the database.
         var application = await _applicationManager.FindByClientIdAsync(request.ClientId!)
@@ -181,10 +194,13 @@ public class AuthorizationController : Controller
 
             // In every other case, render the consent form.
             default:
-                return View(new AuthorizeViewModel
+                var scopes = request.GetScopes();
+                var scopesString = string.Join(" ", scopes);
+
+                return RedirectToPage("/Authorize", new
                 {
-                    ApplicationName = (await _applicationManager.GetDisplayNameAsync(application))!,
-                    Scope = request.Scope!
+                    applicationName = (await _applicationManager.GetDisplayNameAsync(application))!,
+                    scope = scopesString
                 });
         }
     }

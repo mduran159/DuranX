@@ -1,15 +1,120 @@
 services:
-  cartdb:
-    container_name: cartdb
+  identityserverdb:
+    container_name: identityserverdb
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Admin12345678!
+    restart: always
+    ports:
+      - "1433:1433"
+    networks:
+      - mynetwork
+
+  identityserver:
+    container_name: identityserver
+    hostname: identityserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTPS_PORTS=6066
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/usr/local/share/ca-certificates/server.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
+      - ConnectionStrings__Database=Server=identityserverdb;Database=OpeniddictServer;User Id=sa;Password=Admin12345678!;Encrypt=False;TrustServerCertificate=True
+      - OpenIddict__Issuer=https://identityserver:6066/
+      - OpenIddict__Certificates__Signing__Path=/usr/local/share/ca-certificates/server.pfx
+      - OpenIddict__Certificates__Signing__Password=duranxpassword
+      - OpenIddict__Certificates__Encryption__Path=/usr/local/share/ca-certificates/server-encryption.pfx
+      - OpenIddict__Certificates__Encryption__Password=duranxpassword
+      - OpenIddict__DataProtectionKeyDir=/app/keys
+      - OpenIddict__Clients__0__ClientId=shopping_client
+      - OpenIddict__Clients__0__RedirectUri=https://shopping:6065/signin-oidc
+      - OpenIddict__Clients__0__PostLogoutRedirectUri=https://shopping:6065/Home
+    ports:
+      - "6066:6066"
+      - "4020:4020"
+    depends_on:
+      - identityserverdb
+    volumes:
+      - c:\users\user\documents\netprojects\duranx\certificates:/app/certificates
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - C:\Users\User\Documents\NetProjects\duranx\Identity\IdentityServer\DataProtectionKeys:/app/keys
+    networks:
+      mynetwork:
+        ipv4_address: 172.28.0.14
+    extra_hosts:
+      - "shopping:172.28.0.10"
+      - "inventory:172.28.0.11"
+      - "cart:172.28.0.12"
+      - "order:172.28.0.13"
+      - "identityserver:172.28.0.14"
+      - "yarpapigateway:172.28.0.15"
+      - "rabbitmq:172.28.0.16"
+      - "redis:172.28.0.17"
+ 
+  inventorydb:
+    container_name: inventorydb
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=CartDb
+      - POSTGRES_DB=InventoryDb
     restart: always
     ports:
-        - "5433:5432"
+      - "5432:5432"
     volumes:
-      - postgres_cart:/var/lib/postgresql/data/ 
+      - postgres_inventory:/var/lib/postgresql/data/
+    networks:
+      - mynetwork
+
+  inventory.api:
+    container_name: inventory
+    hostname: inventory
+    environment:
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/usr/local/share/ca-certificates/server.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
+      - aspnetcore_environment=development
+      - aspnetcore_https_ports=6060
+      - connectionstrings__database=server=inventorydb;port=5432;database=InventoryDb;user id=postgres;password=postgres;include error detail=true
+      - openiddict__issuer=https://identityserver:6066/
+      - jwtbearer__authority=https://identityserver:6066/
+      - jwtbearer__certificates__signing__path=/usr/local/share/ca-certificates/server.pfx
+      - jwtbearer__certificates__signing__password=duranxpassword
+      - jwtbearer__certificates__encryption__path=/usr/local/share/ca-certificates/server-encryption.pfx
+      - jwtbearer__certificates__encryption__password=duranxpassword
+    ports:
+      - "6060:6060"
+      - "4023:4020"
+    depends_on:
+      - inventorydb
+      - identityserver
+    volumes:
+      - c:\users\user\documents\netprojects\duranx\certificates:/app/certificates
+      - ${appdata}/microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
+      - ${appdata}/asp.net/https:/home/app/.aspnet/https:ro
+    networks:
+      mynetwork:
+        ipv4_address: 172.28.0.11
+    extra_hosts:
+      - "shopping:172.28.0.10"
+      - "inventory:172.28.0.11"
+      - "cart:172.28.0.12"
+      - "order:172.28.0.13"
+      - "identityserver:172.28.0.14"
+      - "yarpapigateway:172.28.0.15"
+      - "rabbitmq:172.28.0.16"
+      - "redis:172.28.0.17"
+
+  discount.grpc:
+    container_name: discount
+    hostname: discount
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTPS_PORTS=6062
+      - ConnectionStrings__Database=Data Source=discountdb
+    ports:
+      - "6062:6062"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     networks:
       - mynetwork
 
@@ -24,42 +129,248 @@ services:
        - "5671:5671"
        - "15672:15672"
     volumes:
-      - C:\Users\User\Documents\NetProjects\duranx\RabbitMQ\Log:/var/log/rabbitmq
-      - C:\Users\User\Documents\NetProjects\duranx\Certificates:/etc/rabbitmq/ssl
+      - C:\Users\User\Documents\NetProjects\duranx\RabbitMQ\Log:/var/log/rabbitmq/
+      - C:\Users\User\Documents\NetProjects\duranx\Certificates:/etc/rabbitmq/ssl/
       - C:\Users\User\Documents\NetProjects\duranx\RabbitMQ\rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-    networks:
-      - mynetwork
     command: rabbitmq-server --ssl
+    networks:
+      mynetwork:
+        ipv4_address: 172.28.0.16
+    extra_hosts:
+      - "shopping:172.28.0.10"
+      - "inventory:172.28.0.11"
+      - "cart:172.28.0.12"
+      - "order:172.28.0.13"
+      - "identityserver:172.28.0.14"
+      - "yarpapigateway:172.28.0.15"
+      - "rabbitmq:172.28.0.16"
+      - "redis:172.28.0.17"
 
-  webapi:
-    environment:
-      - aspnetcore_environment=development
-      - aspnetcore_http_ports=8080
-      - aspnetcore_https_ports=8081
-      - connectionstrings__database=server=cartdb;port=5432;database=cartdb;user id=postgres;password=postgres;include error detail=true
-      - messagebroker__host=amqps://rabbitmq:5671
-      - messagebroker__username=guest
-      - messagebroker__password=guest
-      - messagebroker__certificate__path=/usr/local/share/ca-certificates/webapi.p12
-      - messagebroker__certificate__password=duranxpassword
-      - rabbitmq__hostname=rabbitmq
-      - rabbitmq__servername=rabbitmq
-      - rabbitmq__certpath=/usr/local/share/ca-certificates/webapi.p12
-      - rabbitmq__certpassphrase=duranxpassword
-      - rabbitmq__username=guest
-      - rabbitmq__password=guest
+  redis:
+    container_name: redis
+    hostname: redis
+    restart: always
     ports:
-      - "6001:8080"
-      - "6061:8081"
+    - "6379:6379"  
+    - "6380:6380"
+    volumes:
+      - C:\Users\User\Documents\NetProjects\duranx\Certificates\duranxCA.crt:/usr/local/etc/redis/duranxCA.crt
+      - C:\Users\User\Documents\NetProjects\duranx\Certificates\server.crt:/usr/local/etc/redis/server.crt
+      - C:\Users\User\Documents\NetProjects\duranx\Certificates\server.key:/usr/local/etc/redis/server.key
+      - C:\Users\User\Documents\NetProjects\duranx\Redis\redis.conf:/usr/local/etc/redis/redis.conf
+      - C:\Users\User\Documents\NetProjects\duranx\Redis\Data:/var/lib/redis
+      - C:\Users\User\Documents\NetProjects\duranx\Redis\Logs:/var/log/redis
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      mynetwork:
+        ipv4_address: 172.28.0.17
+    extra_hosts:
+      - "shopping:172.28.0.10"
+      - "inventory:172.28.0.11"
+      - "cart:172.28.0.12"
+      - "order:172.28.0.13"
+      - "identityserver:172.28.0.14"
+      - "yarpapigateway:172.28.0.15"
+      - "rabbitmq:172.28.0.16"
+      - "redis:172.28.0.17"
+
+  cartdb:
+    container_name: cartdb
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=CartDb
+    restart: always
+    ports:
+        - "5433:5432"
+    volumes:
+      - postgres_cart:/var/lib/postgresql/data/ 
+
+  cart.api:
+    container_name: cart
+    hostname: cart
+    environment:
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/usr/local/share/ca-certificates/server.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
+      - aspnetcore_environment=development
+      - aspnetcore_https_ports=6061
+      - GrpcSettings__DiscountUrl=https://discount:6062
+      - connectionstrings__database=server=cartdb;port=5432;database=CartDb;user id=postgres;password=postgres;include error detail=true
+      - ConnectionStrings__Redis=redis:6379
+      - Redis__CertPath=/usr/local/share/ca-certificates/server.pfx
+      - Redis__CertPassword=duranxpassword
+      - Redis__CaCertPath=/usr/local/share/ca-certificates/duranxCA.crt
+      - Redis__Host=redis
+      - Redis__Port=6379
+      - Redis__Password=duranxpassword
+      - RabbitMQ__Host=amqps://rabbitmq:5671
+      - RabbitMQ__Username=guest
+      - RabbitMQ__Password=guest
+      - RabbitMQ__Certificates__CertPath=/usr/local/share/ca-certificates/server.pfx
+      - RabbitMQ__Certificates__CertPassword=duranxpassword
+      - RabbitMQ__Certificates__CaCertPath=/usr/local/share/ca-certificates/duranxCA.crt
+      - OpenIddict__Issuer=https://identityserver:6066/
+      - JwtBearer__Certificates__Signing__Path=/usr/local/share/ca-certificates/server.pfx
+      - JwtBearer__Certificates__Signing__Password=duranxpassword
+      - JwtBearer__Certificates__Encryption__Path=/usr/local/share/ca-certificates/server-encryption.pfx
+      - JwtBearer__Certificates__Encryption__Password=duranxpassword
+    ports:
+      - "6061:6061"
+      - "4025:4020"
     depends_on:
       - rabbitmq
+      - redis
+      - discount.grpc
     volumes:
-      - c:\users\user\documents\netprojects\duranx\certificates:/app/certificates
+      - c:\users\user\documents\netprojects\duranx\certificates:/usr/local/share/ca-certificates/
       - ${appdata}/microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
       - ${appdata}/asp.net/https:/home/app/.aspnet/https:ro
     networks:
+      mynetwork:
+        ipv4_address: 172.28.0.12
+    extra_hosts:
+      - "shopping:172.28.0.10"
+      - "inventory:172.28.0.11"
+      - "cart:172.28.0.12"
+      - "order:172.28.0.13"
+      - "identityserver:172.28.0.14"
+      - "yarpapigateway:172.28.0.15"
+      - "rabbitmq:172.28.0.16"
+      - "redis:172.28.0.17"
+   
+  orderdb:
+    container_name: orderdb
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Admin12345678!
+    restart: always
+    ports:
+      - "1434:1433"
+    networks:
       - mynetwork
+   
+  order.api:
+    container_name: order
+    hostname: order
+    environment:
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/usr/local/share/ca-certificates/server.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
+      - aspnetcore_environment=Development
+      - aspnetcore_https_ports=6063
+      - ConnectionStrings__Database=Server=orderdb;Database=OrderDb;User Id=sa;Password=Admin12345678!;Encrypt=False;TrustServerCertificate=True
+      - RabbitMQ__Host=amqps://rabbitmq:5671
+      - RabbitMQ__Username=guest
+      - RabbitMQ__Password=guest
+      - RabbitMQ__Certificates__CertPath=/usr/local/share/ca-certificates/server.pfx
+      - RabbitMQ__Certificates__CertPassword=duranxpassword
+      - RabbitMQ__Certificates__CaCertPath=/usr/local/share/ca-certificates/duranxCA.crt
+      - OpenIddict__Issuer=https://identityserver:6066/
+      - JwtBearer__Certificates__Signing__Path=/usr/local/share/ca-certificates/server.pfx
+      - JwtBearer__Certificates__Signing__Password=duranxpassword
+      - JwtBearer__Certificates__Encryption__Path=/usr/local/share/ca-certificates/server-encryption.pfx
+      - JwtBearer__Certificates__Encryption__Password=duranxpassword
+    depends_on:
+      - orderdb
+      - rabbitmq
+    ports:
+      - "6063:6063"
+      - "4024:4020"
+    volumes:
+      - c:\users\user\documents\netprojects\duranx\certificates:/usr/local/share/ca-certificates/
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      mynetwork:
+        ipv4_address: 172.28.0.13
+    extra_hosts:
+      - "shopping:172.28.0.10"
+      - "inventory:172.28.0.11"
+      - "cart:172.28.0.12"
+      - "order:172.28.0.13"
+      - "identityserver:172.28.0.14"
+      - "yarpapigateway:172.28.0.15"
+      - "rabbitmq:172.28.0.16"
+      - "redis:172.28.0.17"
+
+  shopping.web:
+    container_name: shopping
+    hostname: shopping
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTPS_PORTS=6065
+      - Authentication__Authority=https://identityserver:6066/
+      - Authentication__PostLogoutRedirectUri=https://shopping:6065/Home
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/usr/local/share/ca-certificates/server.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
+      - ServerEncryptionCert__Path=/usr/local/share/ca-certificates/server-encryption.pfx
+      - ServerEncryptionCert__Password=duranxpassword
+      - DOTNET_SYSTEM_NET_HTTP_SOCKETSHTTPHANDLER_LOGGING=1
+      - DOTNET_SYSTEM_NET_HTTP_SOCKETSHTTPHANDLER_LOGGING_PATH=/var/michael
+      - ApiSettings__GatewayAddress=https://yarpapigateway:6064
+    ports:
+      - "6065:6065"
+      - "4021:4020"
+    volumes:
+      - c:\users\user\documents\netprojects\duranx\certificates:/app/certificates
+      - C:\Users\User\Documents\NetProjects\duranx\WebApps\Shopping.Web\Logs:/var/michael
+      - C:\Users\User\Documents\NetProjects\duranx\WebApps\Shopping.Web\DataProtection-Keys\:/root/.aspnet/DataProtection-Keys/
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      mynetwork:
+        ipv4_address: 172.28.0.10
+    extra_hosts:
+      - "shopping:172.28.0.10"
+      - "inventory:172.28.0.11"
+      - "cart:172.28.0.12"
+      - "order:172.28.0.13"
+      - "identityserver:172.28.0.14"
+      - "yarpapigateway:172.28.0.15"
+      - "rabbitmq:172.28.0.16"
+      - "redis:172.28.0.17"
+
+  yarpapigateway:
+    container_name: yarpapigateway
+    hostname: yarpapigateway
+    environment:
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/usr/local/share/ca-certificates/server.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTPS_PORTS=6064
+      - openiddict__issuer=https://identityserver:6066/
+      - jwtbearer__authority=https://identityserver:6066/
+      - jwtbearer__certificates__signing__path=/usr/local/share/ca-certificates/server.pfx
+      - jwtbearer__certificates__signing__password=duranxpassword
+      - jwtbearer__certificates__encryption__path=/usr/local/share/ca-certificates/server-encryption.pfx
+      - jwtbearer__certificates__encryption__password=duranxpassword
+    depends_on:
+      - inventory.api
+      - cart.api
+      - order.api
+    ports:
+      - "6064:6064"
+      - "4022:4020"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      mynetwork:
+        ipv4_address: 172.28.0.15
+    extra_hosts:
+      - "shopping:172.28.0.10"
+      - "inventory:172.28.0.11"
+      - "cart:172.28.0.12"
+      - "order:172.28.0.13"
+      - "identityserver:172.28.0.14"
+      - "yarpapigateway:172.28.0.15"
+      - "rabbitmq:172.28.0.16"
+      - "redis:172.28.0.17"
 
 networks:
   mynetwork:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+
+

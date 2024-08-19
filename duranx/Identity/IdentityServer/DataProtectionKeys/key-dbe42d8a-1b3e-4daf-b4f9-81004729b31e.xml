@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<key id="dbe42d8a-1b3e-4daf-b4f9-81004729b31e" version="1">
+  <creationDate>2024-08-12T12:11:31.0290622Z</creationDate>
+  <activationDate>2024-08-12T12:11:30.9572676Z</activationDate>
+  <expirationDate>2024-11-10T12:11:30.9572676Z</expirationDate>
+  <descriptor deserializerType="Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel.AuthenticatedEncryptorDescriptorDeserializer, Microsoft.AspNetCore.DataProtection, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60">
+    <descriptor>
+      <encryption algorithm="AES_256_CBC" />
+      <validation algorithm="HMACSHA256" />
+      <encryptedSecret decryptorType="Microsoft.AspNetCore.DataProtection.XmlEncryption.EncryptedXmlDecryptor, Microsoft.AspNetCore.DataProtection, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60" xmlns="http://schemas.asp.net/2015/03/dataProtection">
+        <EncryptedData Type="http://www.w3.org/2001/04/xmlenc#Element" xmlns="http://www.w3.org/2001/04/xmlenc#">
+          <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes256-cbc" />
+          <KeyInfo xmlns="http://www.w3.org/2000/09/xmldsig#">
+            <EncryptedKey xmlns="http://www.w3.org/2001/04/xmlenc#">
+              <EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5" />
+              <KeyInfo xmlns="http://www.w3.org/2000/09/xmldsig#">
+                <X509Data>
+                  <X509Certificate>MIIESzCCAzOgAwIBAgIUdeg6bk9LYu0ePBGH1WE8PsF8Gv0wDQYJKoZIhvcNAQELBQAwgYsxCzAJBgNVBAYTAkNSMREwDwYDVQQIDAhBbGFqdWVsYTERMA8GA1UEBwwIQWxhanVlbGExDzANBgNVBAoMBmR1cmFueDEPMA0GA1UECwwGZHVyYW54MREwDwYDVQQDDAhkdXJhbnhDQTEhMB8GCSqGSIb3DQEJARYSbWFpY29sZHZAZ21haWwuY29tMB4XDTI0MDgxMjEyMDUyMloXDTI1MDgxMjEyMDUyMlowVTELMAkGA1UEBhMCQ1IxETAPBgNVBAgMCEFsYWp1ZWxhMREwDwYDVQQHDAhFbCBDb3lvbDEPMA0GA1UECwwGZHVyYW54MQ8wDQYDVQQDDAZkdXJhbngwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDVfjs/8YnWTqzuDE6CIPen7agB8d+SPH+7wPT8J8LjNqVP7PaiyG8nDQ+ZHku33oHJa6DnAzYLnu5r78VRq1ctJIXSRljOEVCAhHdD6RttU+XsUzhkxYTAHXj/0UcZtCFSgEKgDzRlA0kJ9rXf2qLGox+8zrbUDqbPdMG2Fu/SIlz8hsHnhTR3/FyZZVxg0rpb9eAxijuVTyisUoHY3ur2XCJ6DxYdEEHbTSJERDlknivLLVfnLcBTYQq+IvvvPQFZtrWK6NnULuqgFedE2CvarQH4VEp6iLNY0MAYjbJTZ7YddfiTQV9aJAMhWf/d4wN9+3pImVWG26C+RpVtO9yLAgMBAAGjgdswgdgwCQYDVR0TBAIwADALBgNVHQ8EBAMCBeAwfgYDVR0RBHcwdYIOaWRlbnRpdHlzZXJ2ZXKCCHNob3BwaW5ngglpbnZlbnRvcnmCCGRpc2NvdW50ggRjYXJ0ggVvcmRlcoIIcmFiYml0bXGCBXJlZGlzgg55YXJwYXBpZ2F0ZXdheYcErBwACocErBwAC4cErBwADIcErBwADTAdBgNVHQ4EFgQURB1MjpH9WQBDYY8gfsratiMDWLgwHwYDVR0jBBgwFoAUzIWcOmtFCuFEh7OTyf9l3BeSFS0wDQYJKoZIhvcNAQELBQADggEBAKUntiakkypvTcHf/lLGhq1aW064Jmk13u7r2tAyQS86ohFfpQSj/EbE/TF8ZhMTGrgy47DzHBESM2ugqypZsB/mPXnFuU/P0jyfqM1I/q2fBPkPPazufS45GR9Wu0WAHKWNZg4BCpO8jlehR95T5+AASZi28CfDMVhHUXd4wlLEWcWEo+i8+o45AUalsUQyVxXDJE+tIvKACM/aosuy+pwBkbluJNGj+0gJOVGek7mU9byh8gq2uTA1tj17zqrw1iGp5C08otfvbBnxen9LN9b0dss7YLsLDdtaBm/2COulYU3JDegO2QxYPemsVV2U7zihu9gaf/aFoSNz7L+rrVA=</X509Certificate>
+                </X509Data>
+              </KeyInfo>
+              <CipherData>
+                <CipherValue>SeBZ0CIs6tcT1shd4oGLSLJeR6Gor1vCkCNwR7oKRm3E3zK29AnDkpAd/7VBLzVuRYxsILgAsbJCTZbCMgtdJsJIoPeoVVxOLBTUThiC2G3/ansaXbOiXuzUbOejTM9/BAQ0z5ujn78/dUrnw1CHgGmreMK/AhIABcrePL6OYIs9foy7wErWdsfuA7In512SCuN3/tTL87eUNB07ADy1VbRklwNeU3Be5u9JdjS87o8c1BLhMimKSfJGqLezr6VS2mUa9RmioKXs6p5eW7KudIdfiKkZ5XGuJmMD9FfnR8H0OMbvnNUWDN/Pb0bptGPiPOcIQ3IJ0++8DM+bHD7MjA==</CipherValue>
+              </CipherData>
+            </EncryptedKey>
+          </KeyInfo>
+          <CipherData>
+            <CipherValue>myloQd4QBscU/XZRGtbjyGTQBWFqX28/MMK3AWP485f2qX42URRnujc/uINbszo5X7HL2Is9V1Y86Z3yKoAjOeJWz8oo15lm1cteEgKtvcrvWvJ84wWtc6DgZk/tO804snF5Yz9G2iQBPkWR0QlsMHq8scryuUn9Ck1AICG+3MVdvtZjDbQZ0Q56qD4Ht+hpwCc2R3w/4UWd3vOMqtdd8mxhoCsrOflQp+fFNaR+yhuTtFIUb54e2s6+n+jQVqo9/SG2icrNFKGsFfG1Qalb6C0xSYbp6VhoeIBqGBwWcQ2mH3NfJVu9aav3f2XQAh+C/L8eA6O0CyDZ2hAG0b55GedKEFQHgepIlfeWzD16mkmmt6296beJML8TVuDLZyD4ebhfDp6+MIEbAzXm424NxA==</CipherValue>
+          </CipherData>
+        </EncryptedData>
+      </encryptedSecret>
+    </descriptor>
+  </descriptor>
+</key>

@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Messaging.Events;
+﻿using BuildingBlocks.Messaging.RabbitMQ.Events;
 using MassTransit;
 using Order.Application.Orders.Commands.CreateOrder;
 

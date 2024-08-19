@@ -1,6 +1,7 @@
 using IdentityServer.Data;
 using IdentityServer.Extensions;
 using IdentityServer.HostedServices;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
@@ -29,6 +30,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+var openIddictConfig = builder.Configuration.GetSection("OpenIddict");
 builder.Services.AddOpenIddict()
     .AddCore(options =>
     {
@@ -37,8 +39,6 @@ builder.Services.AddOpenIddict()
     })
     .AddServer(options =>
     {
-        var openIddictConfig = builder.Configuration.GetSection("OpenIddict");
-
         options.AllowClientCredentialsFlow()
                .AllowAuthorizationCodeFlow()
                .AllowRefreshTokenFlow();
@@ -67,8 +67,12 @@ builder.Services.AddOpenIddict()
         options.UseAspNetCore();
     });
 
-builder.Services.AddHostedService<InventoryService>();
-builder.Services.AddHostedService<CartService>();
+// Configuración de protección de datos
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(openIddictConfig["DataProtectionKeyDir"]))
+    .ProtectKeysWithCertificate(new X509Certificate2(openIddictConfig["Certificates:Encryption:Path"], openIddictConfig["Certificates:Encryption:Password"]));
+
+builder.Services.AddHostedService<ConfigurationHostedService>();
 
 builder.Services.AddRazorPages();
 

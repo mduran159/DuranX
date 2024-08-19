@@ -23,9 +23,6 @@
 **/values.dev.yaml
 LICENSE
 README.md
-Identity\IdentityServer\Certificates
-Services\Inventory\Inventory.API\Certificates
-Services\Cart\Cart.API\Certificates
 !**/.gitignore
 !.git/HEAD
 !.git/config

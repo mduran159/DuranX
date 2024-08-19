@@ -1,4 +1,5 @@
 ﻿using Order.Application.Orders.Commands.CreateOrder;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Order.API.Endpoints;
 
@@ -14,7 +15,7 @@ public class CreateOrder : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/orders", async (CreateOrderRequest request, ISender sender) =>
+        app.MapPost("/orders", [Authorize(Policy = "OrderWritable")] async (CreateOrderRequest request, ISender sender) =>
         {
             var command = request.Adapt<CreateOrderCommand>();
 

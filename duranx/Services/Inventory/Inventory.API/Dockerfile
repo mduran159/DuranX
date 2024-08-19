@@ -3,21 +3,21 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 6060
+EXPOSE 4020
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
+ARG BUILD_CONFIGURATION=Debug
 WORKDIR /src
 COPY ["Services/Inventory/Inventory.API/Inventory.API.csproj", "Services/Inventory/Inventory.API/"]
-COPY ["BuildingBlocks/BuildingBlocks/BuildingBlocks.csproj", "BuildingBlocks/BuildingBlocks/"]
+COPY ["BuildingBlocks/BuildingBlocks.WebAPI/BuildingBlocks.WebAPI.csproj", "BuildingBlocks/BuildingBlocks.WebAPI/"]
 RUN dotnet restore "./Services/Inventory/Inventory.API/Inventory.API.csproj"
 COPY . .
 WORKDIR "/src/Services/Inventory/Inventory.API"
 RUN dotnet build "./Inventory.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
+ARG BUILD_CONFIGURATION=Debug
 RUN dotnet publish "./Inventory.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
@@ -34,7 +34,5 @@ COPY Certificates/ /usr/local/share/ca-certificates/
 # Actualizar el almacén de certificados de CA
 RUN update-ca-certificates
 
-# Cambiar de vuelta al usuario app
 USER app
-
 ENTRYPOINT ["dotnet", "Inventory.API.dll"]

@@ -1,4 +1,5 @@
-﻿using Order.Application.Orders.Commands.UpdateOrder;
+﻿using Microsoft.AspNetCore.Authorization;
+using Order.Application.Orders.Commands.UpdateOrder;
 
 namespace Order.API.Endpoints;
 
@@ -14,7 +15,7 @@ public class UpdateOrder : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("/orders", async (UpdateOrderRequest request, ISender sender) =>
+        app.MapPut("/orders", [Authorize(Policy = "OrderWritable")] async (UpdateOrderRequest request, ISender sender) =>
         {
             var command = request.Adapt<UpdateOrderCommand>();
 

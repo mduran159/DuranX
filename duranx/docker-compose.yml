@@ -1,16 +1,66 @@
 services:
+  identityserverdb:
+    image: mcr.microsoft.com/mssql/server
+
+  identityserver:
+    image: ${DOCKER_REGISTRY-}openiddictserver
+    build:
+      context: .
+      dockerfile: Identity/Openiddict/Dockerfile
+
+  inventorydb: 
+     image: postgres
+
+  inventory.api:
+     image: ${docker_registry-}inventoryapi
+     build:
+       context: .
+       dockerfile: Services/Inventory/Inventory.API/Dockerfile
+
   cartdb:
     image: postgres
 
   rabbitmq:
     image: rabbitmq:management
+
+  redis:
+    image: redis
   
-  webapi:
+  cart.api:
     image: ${DOCKER_REGISTRY-}cartapi
     build:
       context: .
       dockerfile: Services/Cart/Cart.API/Dockerfile
 
+  discount.grpc:
+    image: ${DOCKER_REGISTRY-}discountgrpc
+    build:
+      context: .
+      dockerfile: Services/Discount/Discount.Grpc/Dockerfile
+
+  orderdb:
+    image: mcr.microsoft.com/mssql/server
+
+  order.api:
+    image: ${DOCKER_REGISTRY-}orderapi
+    build:
+      context: .
+      dockerfile: Services/Order/Order.API/Dockerfile
+
+  shopping.web:
+    image: ${DOCKER_REGISTRY-}shoppingweb
+    build:
+      context: .
+      dockerfile: WebApps/Shopping.Web/Dockerfile
+
+  yarpapigateway:
+    image: ${DOCKER_REGISTRY-}yarpapigateway
+    build:
+      context: .
+      dockerfile: ApiGateways/YarpApiGateway/Dockerfile
+
 volumes:
    postgres_cart:
+   postgres_inventory:
     
+

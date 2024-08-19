@@ -1,5 +1,8 @@
+using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
+
 namespace Shopping.Web.Pages
 {
+    [Authorize]
     public class CheckoutModel
         (ICartService cartService, ILogger<CheckoutModel> logger)
         : PageModel

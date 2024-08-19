@@ -9,7 +9,8 @@
         "order.api": "StartDebugging",
         "yarpapigateway": "StartDebugging",
         "shopping.web": "StartDebugging",
-        "identityserver": "StartDebugging"
+        "identityserver": "StartDebugging",
+        "openiddictserver": "StartDebugging"
       }
     }
   }
