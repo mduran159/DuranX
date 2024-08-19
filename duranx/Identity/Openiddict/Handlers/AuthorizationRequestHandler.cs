@@ -45,9 +45,6 @@ namespace OpeniddictServer.Handlers
             // And retrieve the IdentityUser if authentication was succeeded
             // If a max_age parameter was provided, ensure that the cookie is not too old.
             // If the user principal can't be extracted or the cookie is too old, redirect the user to the login page.
-
-
-            //TODO PONER IdentityConstants.ApplicationScheme para ponere el PageModel normal a ver si asi si agarra
             var authResult = await httpContext.AuthenticateAsync(IdentityConstants.ApplicationScheme);
             var user = authResult.Succeeded ? await _userManager.GetUserAsync(authResult.Principal) : null;
             if (!authResult.Succeeded || user is null || request.HasPrompt(Prompts.Login) ||
@@ -104,8 +101,7 @@ namespace OpeniddictServer.Handlers
                     case ConsentTypes.Implicit:
                     case ConsentTypes.External when authorizations.Any():
                     case ConsentTypes.Explicit when authorizations.Any() && !request.HasPrompt(Prompts.Consent):
-                        //TODO puede que este principal lo pueda sacar de authresult
-                        var principal = await _signInManager.CreateUserPrincipalAsync(user);
+                        var principal = authResult.Principal;
 
                         // Note: in this sample, the granted scopes match the requested scope
                         // but you may want to allow the user to uncheck specific scopes.
@@ -118,8 +114,21 @@ namespace OpeniddictServer.Handlers
                                                 .Select(item => item.Substring(4)) // Remove "scp:" prefix
                                                 .ToImmutableArray();
                         var resources = await _scopeManager.ListResourcesAsync(scopes).ToListAsync();
+
                         principal.SetScopes(scopes);
                         principal.SetResources(resources);
+
+                        var roles = await _userManager.GetRolesAsync(user);
+                        foreach (var role in roles)
+                        {
+                            principal.AddClaim(Claims.Role, role);
+                        }
+
+                        //add the sub claim to use sub as the name identifier claim
+                        if (string.IsNullOrEmpty(principal.FindFirstValue(Claims.Subject)))
+                        {
+                            principal.SetClaim(Claims.Subject, user.Id);
+                        }
 
                         // Automatically create a permanent authorization to avoid requiring explicit consent
                         // for future authorization or token requests containing the same scopes.
@@ -131,16 +140,11 @@ namespace OpeniddictServer.Handlers
                                                 type: AuthorizationTypes.Permanent,
                                                 scopes: principal.GetScopes());
 
-                        //add the sub claim to use sub as the name identifier claim
-                        if (string.IsNullOrEmpty(principal.FindFirstValue(Claims.Subject)))
-                        {
-                            principal.SetClaim(Claims.Subject, user.Id);
-                        }
+                        var authorizationId = await _authorizationManager.GetIdAsync(authorization);
+                        principal.SetAuthorizationId(authorizationId);
 
-                        principal.SetAuthorizationId(await _authorizationManager.GetIdAsync(authorization));
                         foreach (var claim in principal.Claims)
                         {
-                            //TODO Revisar que claims tiene el principal sit eine openid si son los que puse del lado del seed
                             claim.SetDestinations(OpeniddictExtensions.GetDestinations(claim));
                         }
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
 using OpenIddict.Server;
 using OpenIddict.Server.AspNetCore;
+using OpeniddictServer.Data;
 using OpeniddictServer.Extensions;
 using System.Collections.Immutable;
 using System.Security.Claims;
@@ -53,8 +54,8 @@ namespace OpeniddictServer.Handlers
                                                   nameType: Claims.Name,
                                                   roleType: Claims.Role);
                 identity.SetClaim(Claims.Subject, context.ClientId);
+                identity.SetClaim(Claims.Role, Roles.Admin);
                 identity.SetClaim(Claims.Name, await _applicationManager.GetDisplayNameAsync(application));
-                identity.SetClaim(Claims.Audience, context.ClientId!.Replace("client", "audience"));
                 identity.SetResources(await _scopeManager.ListResourcesAsync(identity.GetScopes()).ToListAsync());
                 identity.SetDestinations(OpeniddictExtensions.GetDestinations);
                 identity.SetScopes(context.Request.GetScopes());
@@ -114,12 +115,16 @@ namespace OpeniddictServer.Handlers
                                         .Select(item => item.Substring(4)) // Remove "scp:" prefix
                                         .ToImmutableArray();
                 var resources = await _scopeManager.ListResourcesAsync(scopes).ToListAsync();
+                var roles = await _userManager.GetRolesAsync(user);
 
                 principal.SetClaim(Claims.Name, user.UserName);
-                //principal.SetClaim(Claims.Role, string.Join(" ", await _userManager.GetRolesAsync(user)));
-                //principal.SetClaim(Claims.Scope, string.Join(" ", scopes));
                 principal.SetScopes(scopes);
                 principal.SetResources(resources);
+
+                foreach (var role in roles)
+                {
+                    principal.SetClaim(Claims.Role, role);
+                }
 
                 foreach (var claim in principal.Claims)
                 {
