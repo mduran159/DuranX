@@ -15,87 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dropbox.Api" Version="7.0.0" />
     <PackageReference Include="IdentityModel" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.7" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Update="Pages\Cart.cshtml">
-      <DependentUpon>Cart.cshtml</DependentUpon>
-    </Content>
-    <Compile Update="Pages\Cart.cshtml.cs">
-      <DependentUpon>Cart.cshtml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="Pages\Checkout.cshtml">
-      <DependentUpon>Checkout.cshtml</DependentUpon>
-    </Content>
-    <Compile Update="Pages\Checkout.cshtml.cs">
-      <DependentUpon>Checkout.cshtml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="Pages\Confirmation.cshtml">
-      <DependentUpon>Confirmation.cshtml</DependentUpon>
-    </Content>
-    <Compile Update="Pages\Confirmation.cshtml.cs">
-      <DependentUpon>Confirmation.cshtml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="Pages\Contact.cshtml">
-      <DependentUpon>Contact.cshtml</DependentUpon>
-    </Content>
-    <Compile Update="Pages\Contact.cshtml.cs">
-      <DependentUpon>Contact.cshtml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="Pages\Error.cshtml">
-      <DependentUpon>Error.cshtml</DependentUpon>
-    </Content>
-    <Compile Update="Pages\Error.cshtml.cs">
-      <DependentUpon>Error.cshtml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="Pages\Index.cshtml">
-      <DependentUpon>Index.cshtml</DependentUpon>
-    </Content>
-    <Compile Update="Pages\Index.cshtml.cs">
-      <DependentUpon>Index.cshtml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="Pages\OrderList.cshtml">
-      <DependentUpon>OrderList.cshtml</DependentUpon>
-    </Content>
-    <Compile Update="Pages\OrderList.cshtml.cs">
-      <DependentUpon>OrderList.cshtml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="Pages\Privacy.cshtml">
-      <DependentUpon>Privacy.cshtml</DependentUpon>
-    </Content>
-    <Compile Update="Pages\Privacy.cshtml.cs">
-      <DependentUpon>Privacy.cshtml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Update="Pages\ProductDetail.cshtml">
-      <DependentUpon>ProductDetail.cshtml</DependentUpon>
-    </Content>
-    <Compile Update="Pages\ProductDetail.cshtml.cs">
-      <DependentUpon>ProductDetail.cshtml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="Pages\ProductsList.cshtml.cs">
-      <DependentUpon>ProductsList.cshtml</DependentUpon>
-    </Compile>
-  </ItemGroup>
 </Project>

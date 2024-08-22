@@ -2,6 +2,7 @@ using IdentityModel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Shopping.Web;
@@ -79,6 +80,8 @@ builder.Services.AddAuthorization();
 builder.Services.AddDataProtection()
     .ProtectKeysWithCertificate(new X509Certificate2(builder.Configuration["ServerEncryptionCert:Path"]!, 
                                                      builder.Configuration["ServerEncryptionCert:Password"]));
+
+builder.Services.AddScoped<IDropboxService>(service => new DropboxService(builder.Configuration["Dropbox:Token"]!));
 
 var app = builder.Build();
 

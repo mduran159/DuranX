@@ -4,7 +4,7 @@
 
     public record GetProductsResult(IEnumerable<Product> Products);
 
-    internal class GetProductssHandler(IDocumentSession session) : IQueryHandler<GetProductsQuery, GetProductsResult>
+    internal class GetProductsHandler(IDocumentSession session) : IQueryHandler<GetProductsQuery, GetProductsResult>
     {
         public async Task<GetProductsResult> Handle(GetProductsQuery query, CancellationToken cancellationToken)
         {

@@ -2,7 +2,7 @@
 
 namespace Inventory.API.Products.DeleteProduct
 {
-    public record DeleteProductRequest(Guid Id, string Name, List<string> Category, string Description, string ImageFile, decimal Price);
+    public record DeleteProductRequest(Guid Id, string Name, string Category, string Description, string ImageFile, decimal Price);
     public record DeleteProductResponse(bool IsSuccess);
 
     public class DeleteProductEndpoint : ICarterModule

@@ -1,0 +1,82 @@
+﻿@page "/Products/Create"
+@model Shopping.Web.Pages.Products.CreateProductModel
+@{
+    ViewData["Products"] = "Products page";
+}
+
+<div class="container">
+    <div>
+        <div class="row">
+            <div class="col-sm">
+                <div class="card">
+                    <div class="card-header bg-primary text-white text-uppercase">
+                        Create New Product
+                    </div>
+                    <div class="card-body">
+                        <form id="createProductForm" method="post" enctype="multipart/form-data">
+                            <!-- ProductId -->
+                            <input type="hidden" asp-for="Product.Id" name="productId" />
+                            
+                            <!-- Name -->
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label text-right">Name</label>
+                                <div class="col-sm-9">
+                                    <input asp-for="Product.Name" class="form-control" />
+                                    <span asp-validation-for="Product.Name" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Category -->
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label text-right">Category</label>
+                                <div class="col-sm-9">
+                                    <select asp-for="Product.Category" class="form-control">
+                                        <option value="">Select a category</option>
+                                        @foreach (var category in Model.CategoryList)
+                                        {
+                                            <option value="@category">@category</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="Product.Category" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label text-right">Description</label>
+                                <div class="col-sm-9">
+                                    <textarea asp-for="Product.Description" class="form-control" rows="5"></textarea>
+                                    <span asp-validation-for="Product.Description" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Image -->
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label text-right">Image</label>
+                                <div class="col-sm-9">
+                                    <input asp-for="ImageFile" type="file" class="form-control" />
+                                    <span asp-validation-for="ImageFile" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Price -->
+                            <div class="row mb-3">
+                                <label class="col-sm-2 col-form-label text-right">Price</label>
+                                <div class="col-sm-9">
+                                    <input asp-for="Product.Price" class="form-control" type="number" min="1" step="1" />
+                                    <span asp-validation-for="Product.Price" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3 justify-content-center">
+                                <div class="col-sm-6">
+                                    <button type="submit" class="form-control btn btn-primary">Create</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

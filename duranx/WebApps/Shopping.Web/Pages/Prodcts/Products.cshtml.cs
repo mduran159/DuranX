@@ -1,17 +1,17 @@
 using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
 
-namespace Shopping.Web.Pages
+namespace Shopping.Web.Pages.Products
 {
     [Authorize]
-    public class IndexModel
-    (IInventoryService inventoryService, ICartService cartService, ILogger<IndexModel> logger)
+    public class ProductsModel
+    (IInventoryService inventoryService, ICartService cartService, ILogger<ProductsModel> logger)
     : PageModel
     {
         public IEnumerable<ProductModel> ProductList { get; set; } = new List<ProductModel>();
 
         public async Task<IActionResult> OnGetAsync()
         {
-            logger.LogInformation("Index page visited");
+            logger.LogInformation("Products page visited");
             var result = await inventoryService.GetProducts();
             ProductList = result.Products;
             return Page();

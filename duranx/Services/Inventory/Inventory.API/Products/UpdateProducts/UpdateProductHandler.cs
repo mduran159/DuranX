@@ -1,6 +1,6 @@
 ﻿namespace Inventory.API.Products.UpdateProduct
 {
-    public record UpdateProdctCommand(Guid Id, string Name, List<string> Category, string Description, string ImageFile, decimal Price)
+    public record UpdateProdctCommand(Guid Id, string Name, string Category, string Description, string ImageFile, decimal Price)
         : ICommand<UpdateProductResult>;
 
     public record UpdateProductResult(bool IsSuccess);

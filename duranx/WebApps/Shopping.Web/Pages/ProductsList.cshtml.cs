@@ -18,7 +18,7 @@ namespace Shopping.Web.Pages
         {
             var response = await inventoryService.GetProducts();
 
-            CategoryList = response.Products.SelectMany(p => p.Category).Distinct();
+            CategoryList = ProductModel.ProductCategory;
 
             if (!string.IsNullOrWhiteSpace(categoryName))
             {

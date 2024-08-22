@@ -1,7 +1,6 @@
 ﻿namespace Inventory.API.Products.CreateProduct
 {
-    public record CreateProdctCommand(Guid Id, string Name, List<string> Category, string Description, string ImageFile, decimal Price)
-        : ICommand<CreateProductResult>;
+    public record CreateProdctCommand(Product Product) : ICommand<CreateProductResult>;
 
     public record CreateProductResult(Guid Id);
 
@@ -9,10 +8,12 @@
     {
         public CreateProductCommandValidator()
         {
-            RuleFor(x => x.Name).NotEmpty().WithMessage("Name is required");
-            RuleFor(x => x.Category).NotEmpty().WithMessage("Category is required");
-            RuleFor(x => x.ImageFile).NotEmpty().WithMessage("ImageFile is required");
-            RuleFor(x => x.Price).GreaterThan(0).WithMessage("Price is required");
+            
+            RuleFor(x => x.Product).NotNull().WithMessage("Product can not be null");
+            RuleFor(x => x.Product.Name).NotEmpty().WithMessage("Name is required");
+            RuleFor(x => x.Product.Category).NotEmpty().WithMessage("Category is required");
+            RuleFor(x => x.Product.ImageFile).NotEmpty().WithMessage("ImageFile is required");
+            RuleFor(x => x.Product.Price).GreaterThan(0).WithMessage("Price is required");
         }
     }
 
@@ -20,19 +21,10 @@
     {
         public async Task<CreateProductResult> Handle(CreateProdctCommand command, CancellationToken cancellationToken)
         {
-            var product = new Product()
-            {
-                Name = command.Name,
-                Category = command.Category,
-                Description = command.Description,
-                ImageFile = command.ImageFile,
-                Price = command.Price
-            };
-
-            session.Store(product);
+            session.Store(command.Product);
             await session.SaveChangesAsync(cancellationToken);
 
-            return new CreateProductResult(Guid.NewGuid());
+            return new CreateProductResult(command.Product.Id);
         }
     }
 }

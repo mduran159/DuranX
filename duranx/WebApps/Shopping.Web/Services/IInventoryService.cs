@@ -10,4 +10,7 @@ public interface IInventoryService
     
     [Get("/inventory-service/products/category/{category}")]
     Task<GetProductByCategoryResponse> GetProductsByCategory(string category);
+
+    [Post("/inventory-service/products")]
+    Task SaveProduct(SaveProductRequest request);
 }
