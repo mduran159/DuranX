@@ -1,5 +1,3 @@
-using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
-
 namespace Shopping.Web.Pages
 {
     [Authorize]
@@ -28,7 +26,7 @@ namespace Shopping.Web.Pages
             logger.LogInformation("Add to cart button clicked");
             var productResponse = await inventoryService.GetProduct(productId);
 
-            var cart = await cartService.LoadUserCart();
+            var cart = await cartService.LoadUserCart(User);
 
             cart.Items.Add(new ShoppingCartItemModel
             {
@@ -36,7 +34,6 @@ namespace Shopping.Web.Pages
                 ProductName = productResponse.Product.Name,
                 Price = productResponse.Product.Price,
                 Quantity = Quantity,
-                Color = Color
             });
 
             await cartService.StoreCart(new StoreCartRequest(cart));

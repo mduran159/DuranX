@@ -2,7 +2,6 @@ using IdentityModel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Shopping.Web;
@@ -81,7 +80,7 @@ builder.Services.AddDataProtection()
     .ProtectKeysWithCertificate(new X509Certificate2(builder.Configuration["ServerEncryptionCert:Path"]!, 
                                                      builder.Configuration["ServerEncryptionCert:Password"]));
 
-builder.Services.AddScoped<IDropboxService>(service => new DropboxService(builder.Configuration["Dropbox:Token"]!));
+builder.Services.AddScoped<IGoogleDriveService>(service => new GoogleDriveService(builder.Configuration));
 
 var app = builder.Build();
 
@@ -100,6 +99,11 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Configura las rutas de los controladores
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller}/{action}");
 
 app.MapRazorPages();
 

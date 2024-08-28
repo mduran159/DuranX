@@ -13,4 +13,10 @@ public interface IInventoryService
 
     [Post("/inventory-service/products")]
     Task SaveProduct(SaveProductRequest request);
+
+    [Put("/inventory-service/products")]
+    Task UpdateProduct(UpdateProductRequest request);
+
+    [Delete("/inventory-service/products/{id}")]
+    Task DeleteProduct(Guid id);
 }

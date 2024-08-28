@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-
-namespace Inventory.API.Products.CreateProduct
+﻿namespace Inventory.API.Products.CreateProduct
 {
     public record GetProductByIdResponse(Product Product);
 
@@ -8,7 +6,7 @@ namespace Inventory.API.Products.CreateProduct
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/products/{id}", [Authorize(Policy = "InventoryReadable")] async (Guid id, ISender sender) =>
+            app.MapGet("/products/{id}", async (Guid id, ISender sender) =>
             {
                 var result = await sender.Send(new GetProductByIdQuery(id));
 

@@ -14,15 +14,15 @@ public interface ICartService
     [Post("/cart-service/cart/checkout")]
     Task<CheckoutCartResponse> CheckoutCart(CheckoutCartRequest request);
 
-    public async Task<ShoppingCartModel> LoadUserCart()
+    public async Task<ShoppingCartModel> LoadUserCart(System.Security.Claims.ClaimsPrincipal user)
     {
         // Get Cart If Not Exist Create New Cart with Default Logged In User Name: swn
-        var userName = "mduran";
+        var userName = user.Identity!.Name;
         ShoppingCartModel cart;
 
         try
         {
-            var getCartResponse = await GetCart(userName);
+            var getCartResponse = await GetCart(userName!);
             cart = getCartResponse.Cart;
         }
         catch (ApiException apiException) when (apiException.Content is not null && apiException.Content.Contains("NotFoundException"))

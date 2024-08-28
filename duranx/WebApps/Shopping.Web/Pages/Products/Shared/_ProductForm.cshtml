@@ -1,0 +1,98 @@
+﻿@model Shopping.Web.Models.Inventory.ProductFormModel
+
+<form method="post" enctype="multipart/form-data">
+    <!-- ProductId -->
+    <input type="hidden" asp-for="Product.Id" name="Product.Id" />
+
+    <!-- Name -->
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label text-right">Name</label>
+        <div class="col-sm-9">
+            <input asp-for="Product.Name" class="form-control" />
+            <span asp-validation-for="Product.Name" class="text-danger"></span>
+        </div>
+    </div>
+
+    <!-- Category -->
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label text-right">Category</label>
+        <div class="col-sm-9">
+            <select asp-for="Product.Category" class="form-control">
+                <option value="">Select a category</option>
+                @foreach (var category in Model.CategoryList)
+                {
+                    <option value="@category">@category</option>
+                }
+            </select>
+            <span asp-validation-for="Product.Category" class="text-danger"></span>
+        </div>
+    </div>
+
+    <!-- Description -->
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label text-right">Description</label>
+        <div class="col-sm-9">
+            <textarea asp-for="Product.Description" class="form-control" rows="5"></textarea>
+            <span asp-validation-for="Product.Description" class="text-danger"></span>
+        </div>
+    </div>
+
+    <!-- Image -->
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label text-right">Image</label>
+        <div class="col-sm-9">
+            <input asp-for="ImageFile" type="file" class="form-control" id="imageInput" />
+            <span asp-validation-for="ImageFile" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label text-right"></label>
+        <div class="col-sm-9">
+            <img id="imagePreview" src="#" alt="Image Preview" style="display:none; max-width:100%; height:auto;" />
+        </div>
+    </div>
+
+    <!-- Price -->
+    <div class="row mb-3">
+        <label class="col-sm-2 col-form-label text-right">Price</label>
+        <div class="col-sm-9">
+            <input asp-for="Product.Price" class="form-control" type="number" min="1" step="1" />
+            <span asp-validation-for="Product.Price" class="text-danger"></span>
+        </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="row mb-3 justify-content-center">
+        <div class="col-sm-6">
+            <button type="submit" asp-page-handler="Submit" class="form-control btn btn-primary">@Model.ButtonText</button>
+        </div>
+    </div>
+
+    <!-- Delete Button (only visible in Edit) -->
+    @if (Model.IsEditMode)
+    {
+        <div class="row mb-3 justify-content-center">
+            <div class="col-sm-6">
+                <button type="submit" asp-page-handler="Delete" class="form-control btn btn-danger">Delete</button>
+            </div>
+        </div>
+    }
+</form>
+
+<script>
+    $(document).ready(function () {
+        $('#imageInput').change(function () {
+            var input = this;
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#imagePreview').attr('src', e.target.result).show();
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        });
+    });
+</script>

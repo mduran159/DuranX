@@ -16,14 +16,6 @@ public class ProductModel
     public string ImageFile { get; set; } = default!;
 
     public decimal Price { get; set; }
-
-    public static List<string> ProductCategory = new()
-    {
-        "Smart Phone",
-        "Home Kitchen",
-        "White Appliances",
-        "Camera"
-    };
 }
 
 //wrapper classes
@@ -31,3 +23,4 @@ public record GetProductsResponse(IEnumerable<ProductModel> Products);
 public record GetProductByCategoryResponse(IEnumerable<ProductModel> Products);
 public record GetProductByIdResponse(ProductModel Product);
 public record SaveProductRequest(ProductModel Product);
+public record UpdateProductRequest(ProductModel Product);

@@ -25,13 +25,13 @@
                 <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
                     <ul class="navbar-nav m-auto">
                         <li class="nav-item active">
-                            <a class="nav-link" asp-area="" asp-page="/Index">Home <span class="sr-only">(current)</span></a>
+                            <a class="nav-link" asp-area="" asp-page="/Home">Home <span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/ProductList">Product</a>
+                            <a class="nav-link" asp-area="" asp-page="/Products/ProductsList">Products</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-page="/Cart">Cart</a>
+                            <a class="nav-link" asp-area="" asp-page="/Cart/Cart">Cart</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-page="/OrderList">Order</a>
@@ -40,21 +40,32 @@
                             <a class="nav-link" asp-area="" asp-page="/Contact">Contact</a>
                         </li>
                     </ul>
-
-                    <form class="form-inline my-2 my-lg-0">
-                        <div class="input-group input-group-sm">
-                            <input type="text" class="form-control" placeholder="Search...">
-                            <div class="input-group-append">
-                                <button type="button" class="btn btn-secondary btn-number">
-                                    <i class="fa fa-search"></i>
-                                </button>
-                            </div>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" placeholder="Search...">
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-secondary btn-number">
+                                <i class="fa fa-search"></i>
+                            </button>
                         </div>
-                        <a class="btn btn-success btn-sm ml-3" asp-area="" asp-page="/Cart">
-                            <i class="fa fa-shopping-cart"></i> Cart
-                            <span class="badge badge-light">3</span>
-                        </a>
-                    </form>
+                    </div>
+                    @{
+                        if (this.User.Identity!.IsAuthenticated)
+                        {
+                            <a class="btn btn-success btn-sm ml-3" asp-area="" asp-page="/Cart">
+                                <i class="fa fa-shopping-cart"></i> Cart
+                                <span class="badge badge-light">3</span>
+                            </a>
+                        }
+                        else
+                        {
+                            // <button class="btn btn-success btn-sm ml-3" type="submit" asp-page-handler="Login" class="btn btn-primary">
+                            //     <i class="fa fa-sign-in"></i> Login
+                            // </button>
+                            <a href="@Url.Action("Login", "Account", new { returnUrl = this.Context.Request.Path })" class="btn btn-primary ml-3">
+                                <i class="fa fa-sign-in"></i> Login
+                            </a>
+                        }
+                    }
                 </div>
             </div>
         </nav>

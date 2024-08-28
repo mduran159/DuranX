@@ -5,3 +5,5 @@ global using Refit;
 global using Shopping.Web.Services;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Mvc.RazorPages;
+global using BuildingBlocks.Identity;
+global using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;

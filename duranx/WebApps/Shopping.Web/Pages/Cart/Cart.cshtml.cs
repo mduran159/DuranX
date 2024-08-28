@@ -1,6 +1,4 @@
-using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
-
-namespace Shopping.Web.Pages
+namespace Shopping.Web.Pages.Cart
 {
     [Authorize]
     public class CartModel(ICartService cartService, ILogger<CartModel> logger)
@@ -10,7 +8,7 @@ namespace Shopping.Web.Pages
 
         public async Task<IActionResult> OnGetAsync()
         {
-            Cart = await cartService.LoadUserCart();
+            Cart = await cartService.LoadUserCart(User);
 
             return Page();
         }
@@ -18,7 +16,7 @@ namespace Shopping.Web.Pages
         public async Task<IActionResult> OnPostRemoveToCartAsync(Guid productId)
         {
             logger.LogInformation("Remove to cart button clicked");
-            Cart = await cartService.LoadUserCart();
+            Cart = await cartService.LoadUserCart(User);
 
             Cart.Items.RemoveAll(x => x.ProductId == productId);
 

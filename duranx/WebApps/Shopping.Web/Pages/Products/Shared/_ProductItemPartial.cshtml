@@ -1,0 +1,28 @@
+﻿@model Models.Inventory.ProductModel
+
+<div class="card h-100">
+    <a style="align-self: center" asp-page="ProductDetail" asp-route-productId="@Model.Id"><img src="@Url.Content($"{Model.ImageFile}&sz=w235-h157")" alt="alternative text" /></a>
+    <div class="card-body">
+        <h4 class="card-title"><a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="color-main">@Model.Name</a></h4>
+        <p class="card-text">@Model.Description</p>
+    </div>
+    <div class="card-footer">
+        <div class="row">
+            <div class="col">
+                <p class="btn btn-danger btn-block" style="pointer-events: none; cursor: default;">@Model.Price $</p>
+            </div>
+            <div class="col">
+                @if (User.IsInRole(Roles.Admin))
+                {
+                    <a asp-page="/Products/Edit" asp-route-id="@Model.Id" class="btn btn-success btn-block">Edit Product</a>
+                }
+                else
+                {
+                    <form asp-page-handler="AddToCart" method="post" name="addToCartForm" id="add_cart_form">
+                        <a href="javascript:;" onclick="parentNode.submit();" class="btn btn-success btn-block">&nbsp;Add to Cart&nbsp;</a>
+                        <input type="hidden" asp-for="@Model.Id" name="productId" />
+                    </form>
+                }                </div>
+        </div>
+    </div>
+</div>

@@ -32,7 +32,7 @@ namespace OpeniddictServer.Data
                     Email = adminEmail,
                     EmailConfirmed = true,
                 };
-                string adminPassword = "duranxpassword";
+                string adminPassword = "Duranx159!";
                 var createUser = await userManager.CreateAsync(newUser, adminPassword);
                 if (createUser.Succeeded)
                 {

@@ -1,5 +1,3 @@
-using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
-
 namespace Shopping.Web.Pages
 {
     [Authorize]

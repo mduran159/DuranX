@@ -1,5 +1,3 @@
-using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
-
 namespace Shopping.Web.Pages
 {
     [Authorize]
@@ -13,7 +11,7 @@ namespace Shopping.Web.Pages
 
         public async Task<IActionResult> OnGetAsync()
         {
-            Cart = await cartService.LoadUserCart();
+            Cart = await cartService.LoadUserCart(User);
 
             return Page();
         }
@@ -22,7 +20,7 @@ namespace Shopping.Web.Pages
         {
             logger.LogInformation("Checkout button clicked");
 
-            Cart = await cartService.LoadUserCart();
+            Cart = await cartService.LoadUserCart(User);
 
             if (!ModelState.IsValid)
             {

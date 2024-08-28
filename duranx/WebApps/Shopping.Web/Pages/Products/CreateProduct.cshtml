@@ -1,0 +1,19 @@
+﻿@page "/Products/Create"
+@model Shopping.Web.Pages.Products.CreateProductModel
+
+<div class="container">
+    <div>
+        <div class="row">
+            <div class="col-sm">
+                <div class="card">
+                    <div class="card-header bg-primary text-white text-uppercase">
+                        Create New Product
+                    </div>
+                    <div class="card-body">
+                        @await Html.PartialAsync("Shared/_ProductForm", Model.FormModel)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,5 +1,4 @@
 using System.Data;
-using AuthorizeAttribute = Microsoft.AspNetCore.Authorization.AuthorizeAttribute;
 
 namespace Shopping.Web.Pages
 {
@@ -18,7 +17,7 @@ namespace Shopping.Web.Pages
         {
             var response = await inventoryService.GetProducts();
 
-            CategoryList = ProductModel.ProductCategory;
+            CategoryList = ProductFormModel.ProductCategory;
 
             if (!string.IsNullOrWhiteSpace(categoryName))
             {
@@ -38,7 +37,7 @@ namespace Shopping.Web.Pages
             logger.LogInformation("Add to cart button clicked");
             var productResponse = await inventoryService.GetProduct(productId);
 
-            var cart = await cartService.LoadUserCart();
+            var cart = await cartService.LoadUserCart(User);
 
             cart.Items.Add(new ShoppingCartItemModel
             {
@@ -46,7 +45,6 @@ namespace Shopping.Web.Pages
                 ProductName = productResponse.Product.Name,
                 Price = productResponse.Product.Price,
                 Quantity = 1,
-                Color = "Black"
             });
 
             await cartService.StoreCart(new StoreCartRequest(cart));
