@@ -1,10 +1,10 @@
-using IdentityModel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Shopping.Web;
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -62,12 +62,12 @@ builder.Services.AddAuthentication(options =>
         options.Scope.Add(scope);
     }
 
-    options.GetClaimsFromUserInfoEndpoint = true;
+    options.GetClaimsFromUserInfoEndpoint = false;
 
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        NameClaimType = JwtClaimTypes.Name,
-        RoleClaimType = JwtClaimTypes.Role,
+        NameClaimType = ClaimTypes.Name,
+        RoleClaimType = ClaimTypes.Role,
     };
     // Usa los valores de appsettings.json para CallbackPath y PostLogoutRedirectUri
     options.CallbackPath = new PathString("/signin-oidc");

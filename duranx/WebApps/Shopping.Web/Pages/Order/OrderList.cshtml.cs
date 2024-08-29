@@ -1,4 +1,4 @@
-namespace Shopping.Web.Pages
+namespace Shopping.Web.Pages.Order
 {
     [Authorize]
     public class OrderListModel

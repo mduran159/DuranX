@@ -106,7 +106,6 @@ namespace OpeniddictServer.Handlers
                         // Note: in this sample, the granted scopes match the requested scope
                         // but you may want to allow the user to uncheck specific scopes.
                         // For that, simply restrict the list of scopes before calling SetScopes.
-                        //principal.RemoveClaims(new[] { Claims.Scope, Claims.open)
                         //principal.SetClaim(Scopes,string.Join(" ", request.GetScopes()));
                         //principal.SetResources(await _scopeManager.ListResourcesAsync(principal.GetScopes()).ToListAsync());
                         var permission = await _applicationManager.GetPermissionsAsync(application!);
@@ -117,18 +116,6 @@ namespace OpeniddictServer.Handlers
 
                         principal.SetScopes(scopes);
                         principal.SetResources(resources);
-
-                        var roles = await _userManager.GetRolesAsync(user);
-                        foreach (var role in roles)
-                        {
-                            principal.AddClaim(Claims.Role, role);
-                        }
-
-                        //add the sub claim to use sub as the name identifier claim
-                        if (string.IsNullOrEmpty(principal.FindFirstValue(Claims.Subject)))
-                        {
-                            principal.SetClaim(Claims.Subject, user.Id);
-                        }
 
                         // Automatically create a permanent authorization to avoid requiring explicit consent
                         // for future authorization or token requests containing the same scopes.
@@ -142,6 +129,13 @@ namespace OpeniddictServer.Handlers
 
                         var authorizationId = await _authorizationManager.GetIdAsync(authorization);
                         principal.SetAuthorizationId(authorizationId);
+
+                        if (string.IsNullOrEmpty(principal.FindFirstValue(Claims.Subject)))
+                        {
+                            principal.SetClaim(Claims.Subject, user.Id);
+                        }
+
+                        //principal.RemoveClaims(ClaimTypes.Email);
 
                         foreach (var claim in principal.Claims)
                         {

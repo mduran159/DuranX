@@ -9,26 +9,15 @@ namespace OpeniddictServer.Extensions
         {
             switch (claim.Type)
             {
-                case Claims.Name:
+                case ClaimTypes.Name:
                     yield return Destinations.AccessToken;
                     yield return Destinations.IdentityToken;
 
                     yield break;
 
-                case Claims.Email:
+                case ClaimTypes.Role:
                     yield return Destinations.AccessToken;
                     yield return Destinations.IdentityToken;
-
-                    yield break;
-
-                case Claims.Role:
-                    yield return Destinations.AccessToken;
-                    yield return Destinations.IdentityToken;
-
-                    yield break;
-
-                case Claims.Audience:
-                    yield return Destinations.AccessToken;
 
                     yield break;
 

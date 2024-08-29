@@ -1,4 +1,3 @@
-using IdentityModel;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Identity;
@@ -84,8 +83,8 @@ builder.Services.AddAuthentication(options =>
     // Configuraci�n de validaci�n de tokens
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        NameClaimType = JwtClaimTypes.Name, // El claim que se utilizar� como nombre del usuario
-        RoleClaimType = JwtClaimTypes.Role, // El claim que se utilizar� como rol del usuario
+        NameClaimType = ClaimTypes.Name, // El claim que se utilizar� como nombre del usuario
+        RoleClaimType = ClaimTypes.Role, // El claim que se utilizar� como rol del usuario
         TokenDecryptionKey = new X509SecurityKey(encryptionCert),
         IssuerSigningKey = new X509SecurityKey(signingCert),
     };

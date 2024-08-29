@@ -6,7 +6,6 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using OpenIddict.Server.AspNetCore;
 using OpeniddictServer.CustomPageModels;
 
 namespace OpeniddictServer.Areas.Identity.Pages.Account
