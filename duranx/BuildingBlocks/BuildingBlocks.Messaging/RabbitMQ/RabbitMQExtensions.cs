@@ -30,6 +30,8 @@ namespace BuildingBlocks.Messaging.RabbitMQ
                             options.CertificatePassphrase = configuration["RabbitMQ:Certificates:CertPassword"]!;
                             options.ServerName = new Uri(configuration["RabbitMQ:Host"]!).Host;
                         });
+
+                        configurator.ConfigureEndpoints(context);
                     });
                 });
             });

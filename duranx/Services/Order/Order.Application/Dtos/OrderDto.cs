@@ -11,3 +11,5 @@ public record OrderDto(
     PaymentDto Payment,
     OrderStatus Status,
     List<OrderItemDto> OrderItems);
+
+public record OrderItemDto(Guid OrderId, Guid ProductId, int Quantity, decimal Price);

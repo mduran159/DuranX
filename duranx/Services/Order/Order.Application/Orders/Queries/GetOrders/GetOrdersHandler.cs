@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Pagination;
+﻿using BuildingBlocks.WebAPI.Models.Pagination;
 
 namespace Order.Application.Orders.Queries.GetOrders;
 public class GetOrdersHandler(IApplicationDbContext dbContext)

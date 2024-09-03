@@ -15,7 +15,7 @@ namespace Shopping.Web.Pages
         {
             _logger.LogInformation("Products page visited");
             var result = await _inventoryService.GetProducts();
-            ProductList = result.Products;
+            ProductList = result.Products.Data;
             return Page();
         }
     }

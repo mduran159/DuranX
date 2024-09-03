@@ -143,8 +143,13 @@ namespace OpeniddictServer.Handlers
                         }
 
                         await httpContext.SignInAsync(
-                            OpenIddictServerAspNetCoreDefaults.AuthenticationScheme, 
+                            CookieAuthenticationDefaults.AuthenticationScheme,
                             principal);
+
+                        await httpContext.SignInAsync(
+                            OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+                            principal);
+
                         context.HandleRequest();
                         return;
 

@@ -10,23 +10,38 @@ namespace Shopping.Web.Pages.Products
         [BindProperty(SupportsGet = true)]
         public string SelectedCategory { get; set; } = default!;
 
+        [BindProperty(SupportsGet = true)]
+        public int PageIndex { get; set; } = 1;
+
+        [BindProperty(SupportsGet = true)]
+        public int PageSize { get; set; } = 5;
+
+        public int TotalPages { get; set; }
+
         public ProductListModel(IInventoryService inventoryService, ICartService cartService, ILogger<HomeModel> logger)
             : base(inventoryService, cartService, logger)
         {
         }
 
-        public async Task<IActionResult> OnGetAsync(string categoryName)
+        public async Task<IActionResult> OnGetAsync(string categoryName, int? pageIndex = 1, int? pageSize = 5)
         {
             CategoryList = ProductFormModel.ProductCategory;
 
+            PageSize = pageSize ?? 5;
+            PageIndex = pageIndex ?? 1;
+
             if (!string.IsNullOrWhiteSpace(categoryName))
             {
-                ProductList = (await _inventoryService.GetProductsByCategory(categoryName)).Products;
+                var result = (await _inventoryService.GetProductsByCategory(categoryName, PageIndex, PageSize));
+                ProductList = result.Products.Data;
                 SelectedCategory = categoryName;
+                TotalPages = (int)Math.Ceiling(result.Products.Count / (double)PageSize);
             }
             else
             {
-                ProductList = (await _inventoryService.GetProducts()).Products;
+                var result = await _inventoryService.GetProducts(PageIndex, PageSize);
+                ProductList = result.Products.Data;
+                TotalPages = (int)Math.Ceiling(result.Products.Count / (double)PageSize);
             }
 
             return Page();

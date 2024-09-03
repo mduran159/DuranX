@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Shopping.Web.Controllers
 {
@@ -14,13 +15,31 @@ namespace Shopping.Web.Controllers
                 returnUrl = Url.Content("~/"); // Redirige a la página de inicio si la returnUrl no es válida
             }
 
-            var properties = new AuthenticationProperties
-            {
-                RedirectUri = returnUrl // Define a dónde redirigir después de la autenticación
-            };
-
             // Redirige al servidor OpenIddict para la autenticación
-            return Challenge(properties, OpenIdConnectDefaults.AuthenticationScheme);
+            return Challenge(new AuthenticationProperties { RedirectUri = returnUrl }, 
+                OpenIdConnectDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            // Redirige al servidor OpenIddict para el logout
+            var callbackUrl = "/Home";
+
+            // Cerrar sesión en la aplicación y redirigir al servidor de OpenIddict para cerrar sesión allí también
+            return SignOut(new AuthenticationProperties { RedirectUri = callbackUrl },
+                           OpenIdConnectDefaults.AuthenticationScheme,
+                           CookieAuthenticationDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet]
+        public IActionResult LogoutCallBack()
+        {
+            // Redirige al servidor OpenIddict para el logout
+            var callbackUrl = "/Home";
+
+            // Cerrar sesión en la aplicación y redirigir al servidor de OpenIddict para cerrar sesión allí también
+            return Redirect(callbackUrl);
         }
     }
 

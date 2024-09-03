@@ -1,4 +1,7 @@
-﻿namespace Inventory.API.Products.UpdateProduct
+﻿using BuildingBlocks.Messaging.RabbitMQ.Events;
+using MassTransit;
+
+namespace Inventory.API.Products.UpdateProduct
 {
     public record UpdateProdctCommand(Guid Id, string Name, string Category, string Description, string ImageFile, decimal Price)
         : ICommand<UpdateProductResult>;
@@ -18,7 +21,8 @@
         }
     }
 
-    internal class UpdateProductHandler(IDocumentSession session) : ICommandHandler<UpdateProdctCommand, UpdateProductResult>
+    internal class UpdateProductHandler(IDocumentSession session, IPublishEndpoint publishEndpoint) 
+        : ICommandHandler<UpdateProdctCommand, UpdateProductResult>
     {
         public async Task<UpdateProductResult> Handle(UpdateProdctCommand command, CancellationToken cancellationToken)
         {
@@ -37,6 +41,15 @@
 
             session.Update(product);
             await session.SaveChangesAsync(cancellationToken);
+
+            var eventMessage = new UpdateOrderProductsEvent()
+            {
+                ProductId = command.Id,
+                Name = command.Name,
+                Price = command.Price
+            };
+
+            await publishEndpoint.Publish(eventMessage, cancellationToken);
 
             return new UpdateProductResult(true);
         }

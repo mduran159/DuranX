@@ -36,7 +36,8 @@ public class CheckoutCartCommandHandler
 
         var eventMessage = command.CartCheckoutDto.Adapt<CartCheckoutEvent>();
         eventMessage.TotalPrice = cart.TotalPrice;
-
+        eventMessage.Items = cart.Items.Select(x => new CartItemCheckoutEvent(eventMessage.Id, x.ProductId, x.Quantity, x.Price)).ToList();
+        
         await publishEndpoint.Publish(eventMessage, cancellationToken);
 
         await repository.DeleteCart(command.CartCheckoutDto.UserName, cancellationToken);

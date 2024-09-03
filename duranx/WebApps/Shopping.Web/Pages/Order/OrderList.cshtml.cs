@@ -1,3 +1,5 @@
+using Shopping.Web.Extensions;
+
 namespace Shopping.Web.Pages.Order
 {
     [Authorize]
@@ -7,13 +9,19 @@ namespace Shopping.Web.Pages.Order
     {
         public IEnumerable<OrderModel> Orders { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task<IActionResult> OnGetAsync(int? pageIndex = 1, int? pageSize = 10)
         {
             // assumption customerId is passed in from the UI authenticated user swn
-            var customerId = new Guid("58c49479-ec65-4de2-86e7-033c546291aa");
-
-            var response = await orderService.GetOrdersByCustomer(customerId);
-            Orders = response.Orders;
+            if (User.IsInRole(Roles.Admin))
+            {
+                var response = await orderService.GetOrders(pageIndex, pageSize);
+                Orders = response.Orders.Data;
+            }
+            else
+            {
+                var response = await orderService.GetOrdersByCustomer(User.GetId());
+                Orders = response.Orders;
+            }
 
             return Page();
         }

@@ -13,20 +13,20 @@ namespace Shopping.Web.Pages
         [BindProperty(SupportsGet = true)]
         public string SelectedCategory { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(string categoryName)
+        public async Task<IActionResult> OnGetAsync(string categoryName, int? pageIndex = 1, int? pageSize = 10)
         {
-            var response = await inventoryService.GetProducts();
-
             CategoryList = ProductFormModel.ProductCategory;
 
             if (!string.IsNullOrWhiteSpace(categoryName))
             {
-                ProductList = response.Products.Where(p => p.Category.Contains(categoryName));
+                var response = await inventoryService.GetProductsByCategory(categoryName, pageIndex, pageSize);
+                ProductList = response.Products.Data.Where(p => p.Category.Contains(categoryName));
                 SelectedCategory = categoryName;
             }
             else
             {
-                ProductList = response.Products;
+                var response = await inventoryService.GetProducts(pageIndex, pageSize);
+                ProductList = response.Products.Data;
             }
 
             return Page();

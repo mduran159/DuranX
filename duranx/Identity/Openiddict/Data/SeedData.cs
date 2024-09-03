@@ -39,6 +39,24 @@ namespace OpeniddictServer.Data
                     await userManager.AddToRoleAsync(newUser, Roles.Admin);
                 }
             }
+
+            var userEmail = "maicoldv@gmail.com";
+            var userUser = await userManager.FindByEmailAsync(userEmail);
+            if (userUser == null)
+            {
+                var newUser = new IdentityUser
+                {
+                    UserName = userEmail,
+                    Email = userEmail,
+                    EmailConfirmed = true,
+                };
+                string userPassword = "Leviatan159!";
+                var createUser = await userManager.CreateAsync(newUser, userPassword);
+                if (createUser.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(newUser, Roles.User);
+                }
+            }
         }
     }
 }

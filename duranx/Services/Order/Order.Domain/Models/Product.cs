@@ -18,4 +18,10 @@ public class Product : Entity<ProductId>
 
         return product;
     }
+
+    public void UpdateProduct(string name, decimal price)
+    {
+        Name = name;
+        Price = price;
+    }
 }

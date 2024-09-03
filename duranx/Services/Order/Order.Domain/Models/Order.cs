@@ -50,7 +50,7 @@ public class Order : Aggregate<OrderId>
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(quantity);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(price);
 
-        var orderItem = new OrderItem(Id, productId, quantity, price);
+        var orderItem = new OrderItem(orderId: Id, productId, quantity, price);
         _orderItems.Add(orderItem);
     }
 

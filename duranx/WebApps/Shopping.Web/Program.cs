@@ -71,7 +71,8 @@ builder.Services.AddAuthentication(options =>
     };
     // Usa los valores de appsettings.json para CallbackPath y PostLogoutRedirectUri
     options.CallbackPath = new PathString("/signin-oidc");
-    options.SignedOutRedirectUri = authenticationConfig["PostLogoutRedirectUri"]!;
+    options.SignedOutCallbackPath = new PathString("/Account/LogoutCallBack");
+    options.SignedOutRedirectUri = "https://shopping:6065/Home";
 });
 
 builder.Services.AddAuthorization();

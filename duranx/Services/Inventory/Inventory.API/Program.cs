@@ -1,3 +1,4 @@
+using BuildingBlocks.Messaging.RabbitMQ;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -36,6 +37,9 @@ if (builder.Environment.IsDevelopment())
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 
 builder.Services.AddHealthChecks().AddNpgSql(configuration.GetConnectionString("Database")!);
+
+//Async communication services
+builder.Services.AddRabbitMQ(builder.Configuration);
 
 //Identity
 var openiddictConf = configuration.GetSection("OpenIddict");

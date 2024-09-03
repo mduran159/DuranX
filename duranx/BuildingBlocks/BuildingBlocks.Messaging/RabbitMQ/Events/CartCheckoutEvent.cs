@@ -20,4 +20,9 @@ public record CartCheckoutEvent : IntegrationEvent
     public string Expiration { get; set; } = default!;
     public string CVV { get; set; } = default!;
     public int PaymentMethod { get; set; } = default!;
+
+    //Items
+    public List<CartItemCheckoutEvent> Items { get; set; } = default!;
 }
+
+public record CartItemCheckoutEvent(Guid OrderId, Guid ProductId, int Quantity, decimal Price);

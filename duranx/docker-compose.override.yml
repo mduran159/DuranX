@@ -10,37 +10,65 @@ services:
     networks:
       - mynetwork
 
-  identityserver:
-    container_name: identityserver
-    hostname: identityserver
+  # identityserver:
+  #   container_name: identityserver
+  #   hostname: identityserver
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #     - ASPNETCORE_HTTPS_PORTS=6066
+  #     - ASPNETCORE_Kestrel__Certificates__Default__Path=/usr/local/share/ca-certificates/server.pfx
+  #     - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
+  #     - ConnectionStrings__Database=Server=identityserverdb;Database=OpeniddictServer;User Id=sa;Password=Admin12345678!;Encrypt=False;TrustServerCertificate=True
+  #     - OpenIddict__Issuer=https://identityserver:6066/
+  #     - OpenIddict__Certificates__Signing__Path=/usr/local/share/ca-certificates/server.pfx
+  #     - OpenIddict__Certificates__Signing__Password=duranxpassword
+  #     - OpenIddict__Certificates__Encryption__Path=/usr/local/share/ca-certificates/server-encryption.pfx
+  #     - OpenIddict__Certificates__Encryption__Password=duranxpassword
+  #     - OpenIddict__DataProtectionKeyDir=/app/keys
+  #     - OpenIddict__Clients__0__ClientId=shopping_client
+  #     - OpenIddict__Clients__0__RedirectUri=https://shopping:6065/signin-oidc
+  #     - OpenIddict__Clients__0__PostLogoutRedirectUri=https://shopping:6065/signout-callback-oidc
+  #   ports:
+  #     - "6066:6066"
+  #     - "4020:4020"
+  #   depends_on:
+  #     - identityserverdb
+  #   volumes:
+  #     - c:\users\user\documents\netprojects\duranx\certificates:/app/certificates
+  #     - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+  #     - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  #     - C:\Users\User\Documents\NetProjects\duranx\Identity\IdentityServer\DataProtectionKeys:/app/keys
+  #   networks:
+  #     mynetwork:
+  #       ipv4_address: 172.28.0.14
+  #   extra_hosts:
+  #     - "shopping:172.28.0.10"
+  #     - "inventory:172.28.0.11"
+  #     - "cart:172.28.0.12"
+  #     - "order:172.28.0.13"
+  #     - "identityserver:172.28.0.14"
+  #     - "yarpapigateway:172.28.0.15"
+  #     - "rabbitmq:172.28.0.16"
+  #     - "redis:172.28.0.17"
+
+  rabbitmq:
+    container_name: rabbitmq
+    hostname: rabbitmq
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTPS_PORTS=6066
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/usr/local/share/ca-certificates/server.pfx
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
-      - ConnectionStrings__Database=Server=identityserverdb;Database=OpeniddictServer;User Id=sa;Password=Admin12345678!;Encrypt=False;TrustServerCertificate=True
-      - OpenIddict__Issuer=https://identityserver:6066/
-      - OpenIddict__Certificates__Signing__Path=/usr/local/share/ca-certificates/server.pfx
-      - OpenIddict__Certificates__Signing__Password=duranxpassword
-      - OpenIddict__Certificates__Encryption__Path=/usr/local/share/ca-certificates/server-encryption.pfx
-      - OpenIddict__Certificates__Encryption__Password=duranxpassword
-      - OpenIddict__DataProtectionKeyDir=/app/keys
-      - OpenIddict__Clients__0__ClientId=shopping_client
-      - OpenIddict__Clients__0__RedirectUri=https://shopping:6065/signin-oidc
-      - OpenIddict__Clients__0__PostLogoutRedirectUri=https://shopping:6065/Home
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    restart: always
     ports:
-      - "6066:6066"
-      - "4020:4020"
-    depends_on:
-      - identityserverdb
+       - "5671:5671"
+       - "15672:15672"
     volumes:
-      - c:\users\user\documents\netprojects\duranx\certificates:/app/certificates
-      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-      - C:\Users\User\Documents\NetProjects\duranx\Identity\IdentityServer\DataProtectionKeys:/app/keys
+      - C:\Users\User\Documents\NetProjects\duranx\RabbitMQ\Log:/var/log/rabbitmq/
+      - C:\Users\User\Documents\NetProjects\duranx\Certificates:/etc/rabbitmq/ssl/
+      - C:\Users\User\Documents\NetProjects\duranx\RabbitMQ\rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    command: rabbitmq-server --ssl
     networks:
       mynetwork:
-        ipv4_address: 172.28.0.14
+        ipv4_address: 172.28.0.16
     extra_hosts:
       - "shopping:172.28.0.10"
       - "inventory:172.28.0.11"
@@ -74,6 +102,12 @@ services:
       - aspnetcore_environment=development
       - aspnetcore_https_ports=6060
       - connectionstrings__database=server=inventorydb;port=5432;database=InventoryDb;user id=postgres;password=postgres;include error detail=true
+      - RabbitMQ__Host=amqps://rabbitmq:5671
+      - RabbitMQ__Username=guest
+      - RabbitMQ__Password=guest
+      - RabbitMQ__Certificates__CertPath=/usr/local/share/ca-certificates/server.pfx
+      - RabbitMQ__Certificates__CertPassword=duranxpassword
+      - RabbitMQ__Certificates__CaCertPath=/usr/local/share/ca-certificates/duranxCA.crt
       - openiddict__issuer=https://identityserver:6066/
       - jwtbearer__authority=https://identityserver:6066/
       - jwtbearer__certificates__signing__path=/usr/local/share/ca-certificates/server.pfx
@@ -85,7 +119,7 @@ services:
       - "4023:4020"
     depends_on:
       - inventorydb
-      - identityserver
+      #- identityserver
     volumes:
       - c:\users\user\documents\netprojects\duranx\certificates:/app/certificates
       - ${appdata}/microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
@@ -117,34 +151,6 @@ services:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     networks:
       - mynetwork
-
-  rabbitmq:
-    container_name: rabbitmq
-    hostname: rabbitmq
-    environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
-    restart: always
-    ports:
-       - "5671:5671"
-       - "15672:15672"
-    volumes:
-      - C:\Users\User\Documents\NetProjects\duranx\RabbitMQ\Log:/var/log/rabbitmq/
-      - C:\Users\User\Documents\NetProjects\duranx\Certificates:/etc/rabbitmq/ssl/
-      - C:\Users\User\Documents\NetProjects\duranx\RabbitMQ\rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-    command: rabbitmq-server --ssl
-    networks:
-      mynetwork:
-        ipv4_address: 172.28.0.16
-    extra_hosts:
-      - "shopping:172.28.0.10"
-      - "inventory:172.28.0.11"
-      - "cart:172.28.0.12"
-      - "order:172.28.0.13"
-      - "identityserver:172.28.0.14"
-      - "yarpapigateway:172.28.0.15"
-      - "rabbitmq:172.28.0.16"
-      - "redis:172.28.0.17"
 
   redis:
     container_name: redis
@@ -301,7 +307,7 @@ services:
   #     - ASPNETCORE_ENVIRONMENT=Development
   #     - ASPNETCORE_HTTPS_PORTS=6065
   #     - Authentication__Authority=https://identityserver:6066/
-  #     - Authentication__PostLogoutRedirectUri=https://shopping:6065/Home
+  #     - Authentication__PostLogoutRedirectUri=https://shopping:6065/signout-callback-oidc
   #     - ASPNETCORE_Kestrel__Certificates__Default__Path=/usr/local/share/ca-certificates/server.pfx
   #     - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
   #     - ServerEncryptionCert__Path=/usr/local/share/ca-certificates/server-encryption.pfx

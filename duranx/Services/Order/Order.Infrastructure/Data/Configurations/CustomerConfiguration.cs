@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Order.Domain.Models;
-using Order.Domain.ValueObjects;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Order.Infrastructure.Data.Configurations;
 public class CustomerConfiguration : IEntityTypeConfiguration<Customer>

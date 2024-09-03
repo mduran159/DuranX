@@ -4,12 +4,7 @@ public class CreateOrderHandler(IApplicationDbContext dbContext)
 {
     public async Task<CreateOrderResult> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
     {
-        //create Order entity from command object
-        //save to database
-        //return result 
-
         var order = CreateNewOrder(command.Order);
-
         dbContext.Orders.Add(order);
         await dbContext.SaveChangesAsync(cancellationToken);
 
@@ -20,7 +15,14 @@ public class CreateOrderHandler(IApplicationDbContext dbContext)
     {
         var shippingAddress = Address.Of(orderDto.ShippingAddress.FirstName, orderDto.ShippingAddress.LastName, orderDto.ShippingAddress.EmailAddress, orderDto.ShippingAddress.AddressLine, orderDto.ShippingAddress.Country, orderDto.ShippingAddress.State, orderDto.ShippingAddress.ZipCode);
         var billingAddress = Address.Of(orderDto.BillingAddress.FirstName, orderDto.BillingAddress.LastName, orderDto.BillingAddress.EmailAddress, orderDto.BillingAddress.AddressLine, orderDto.BillingAddress.Country, orderDto.BillingAddress.State, orderDto.BillingAddress.ZipCode);
+            
+        var customer = dbContext.Customers.FirstOrDefault(x => x.Id == CustomerId.Of(orderDto.CustomerId));
+        if (customer is null)
+        {
+            dbContext.Customers.Add(Customer.Create(CustomerId.Of(orderDto.CustomerId), orderDto.OrderName.Split("@")[0].ToString(), orderDto.OrderName));
+        }
 
+        //TODO cambiar .of por un validator en el mismo create
         var newOrder = OrderEntity.Create(
                 id: OrderId.Of(Guid.NewGuid()),
                 customerId: CustomerId.Of(orderDto.CustomerId),

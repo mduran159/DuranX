@@ -1,4 +1,4 @@
-﻿using BuildingBlocks.Pagination;
+﻿using BuildingBlocks.WebAPI.Models.Pagination;
 using Microsoft.AspNetCore.Authorization;
 using Order.Application.Orders.Queries.GetOrders;
 

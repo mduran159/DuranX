@@ -93,7 +93,7 @@ builder.Services.AddAuthentication(options =>
     options.CallbackPath = "/signin-oidc";
 
     // La URL a la que el usuario ser� redirigido despu�s de cerrar sesi�n
-    options.SignedOutRedirectUri = shoppingClient.PostLogoutRedirectUri!;
+    options.SignedOutRedirectUri = "/Home";
 });
 
 builder.Services.AddOpenIddict()
@@ -119,8 +119,7 @@ builder.Services.AddOpenIddict()
         options.AddSigningCertificate(new X509Certificate2(signingCertificate["Path"], signingCertificate["Password"]))
                .AddEncryptionCertificate(new X509Certificate2(encryptionCertificate["Path"]!, encryptionCertificate["Password"]));
 
-        options.UseAspNetCore()
-               .EnableLogoutEndpointPassthrough();
+        options.UseAspNetCore();
 
         options.AddEventHandler<HandleTokenRequestContext>(options =>
             options.UseScopedHandler<TokenRequestHandler>());
@@ -128,6 +127,8 @@ builder.Services.AddOpenIddict()
         options.AddEventHandler<HandleAuthorizationRequestContext>(options =>
             options.UseScopedHandler<AuthorizationRequestHandler>());
 
+        options.AddEventHandler<HandleLogoutRequestContext>(options =>
+            options.UseScopedHandler<LogoutRequestHandler>());
     })
     .AddValidation(options =>
     {

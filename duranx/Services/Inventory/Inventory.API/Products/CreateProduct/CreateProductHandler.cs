@@ -1,4 +1,7 @@
-﻿namespace Inventory.API.Products.CreateProduct
+﻿using BuildingBlocks.Messaging.RabbitMQ.Events;
+using MassTransit;
+
+namespace Inventory.API.Products.CreateProduct
 {
     public record CreateProdctCommand(Product Product) : ICommand<CreateProductResult>;
 
@@ -17,12 +20,22 @@
         }
     }
 
-    internal class CreateProductHandler(IDocumentSession session) : ICommandHandler<CreateProdctCommand, CreateProductResult>
+    internal class CreateProductHandler(IDocumentSession session, IPublishEndpoint publishEndpoint) 
+        : ICommandHandler<CreateProdctCommand, CreateProductResult>
     {
         public async Task<CreateProductResult> Handle(CreateProdctCommand command, CancellationToken cancellationToken)
         {
             session.Store(command.Product);
             await session.SaveChangesAsync(cancellationToken);
+
+            var eventMessage = new UpdateOrderProductsEvent()
+            {
+                ProductId = command.Product.Id,
+                Name = command.Product.Name,
+                Price = command.Product.Price
+            };
+
+            await publishEndpoint.Publish(eventMessage, cancellationToken);
 
             return new CreateProductResult(command.Product.Id);
         }

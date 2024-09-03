@@ -1,6 +1,6 @@
 namespace Shopping.Web.Pages.Cart
 {
-    [Authorize]
+    [Authorize(Roles = Roles.User)]
     public class CartModel(ICartService cartService, ILogger<CartModel> logger)
         : PageModel
     {

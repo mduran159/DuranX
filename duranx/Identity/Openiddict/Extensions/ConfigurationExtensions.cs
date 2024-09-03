@@ -16,6 +16,7 @@ namespace OpeniddictServer.Extensions
                     permissions.Add(Permissions.GrantTypes.AuthorizationCode);
                     permissions.Add(Permissions.GrantTypes.RefreshToken);
                     permissions.Add(Permissions.ResponseTypes.Code);
+                    permissions.Add(Permissions.Endpoints.Logout);
                     break;
 
                 case GrantType.ClientCredentials:

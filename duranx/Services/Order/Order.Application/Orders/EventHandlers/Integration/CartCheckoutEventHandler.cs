@@ -31,11 +31,8 @@ public class CartCheckoutEventHandler
             BillingAddress: addressDto,
             Payment: paymentDto,
             Status: Order.Domain.Enums.OrderStatus.Pending,
-            OrderItems:
-            [
-                new OrderItemDto(orderId, new Guid("5334c996-8457-4cf0-815c-ed2b77c4ff61"), 2, 500),
-                new OrderItemDto(orderId, new Guid("c67d6323-e8b1-4bdf-9a75-b0d0d2e7e914"), 1, 400)
-            ]);
+            OrderItems: message.Items.Select(x => new OrderItemDto(orderId, x.ProductId, x.Quantity, x.Price)).ToList()
+        );
 
         return new CreateOrderCommand(orderDto);
     }

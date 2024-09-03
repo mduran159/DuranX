@@ -11,7 +11,6 @@ ARG BUILD_CONFIGURATION=Debug
 WORKDIR /src
 COPY ["Services/Cart/Cart.API/Cart.API.csproj", "Services/Cart/Cart.API/"]
 COPY ["BuildingBlocks/BuildingBlocks.Cache/BuildingBlocks.Cache.csproj", "BuildingBlocks/BuildingBlocks.Cache/"]
-COPY ["BuildingBlocks/BuildingBlocks.Common/BuildingBlocks.Common.csproj", "BuildingBlocks/BuildingBlocks.Common/"]
 COPY ["BuildingBlocks/BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj", "BuildingBlocks/BuildingBlocks.Messaging/"]
 COPY ["BuildingBlocks/BuildingBlocks.WebAPI/BuildingBlocks.WebAPI.csproj", "BuildingBlocks/BuildingBlocks.WebAPI/"]
 RUN dotnet restore "./Services/Cart/Cart.API/Cart.API.csproj"

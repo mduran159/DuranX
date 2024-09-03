@@ -1,17 +1,19 @@
-﻿namespace Inventory.API.Products.CreateProduct
-{
-    public record GetProductsQuery(int? PageNumber = 1, int? PageSize = 10) : IQuery<GetProductsResult>;
+﻿using BuildingBlocks.WebAPI.Models.Pagination;
 
-    public record GetProductsResult(IEnumerable<Product> Products);
+namespace Inventory.API.Products.CreateProduct
+{
+    public record GetProductsQuery(PaginationRequest PaginationRequest) : IQuery<GetProductsResult>;
+
+    public record GetProductsResult(PaginatedResult<Product> Products);
 
     internal class GetProductsHandler(IDocumentSession session) : IQueryHandler<GetProductsQuery, GetProductsResult>
     {
         public async Task<GetProductsResult> Handle(GetProductsQuery query, CancellationToken cancellationToken)
         {
             var products = await session.Query<Product>()
-                .ToPagedListAsync(query.PageNumber ?? 1, query.PageSize ?? 10, cancellationToken);
-            
-            return new GetProductsResult(products);
+                .ToPagedListAsync(query.PaginationRequest.PageIndex, query.PaginationRequest.PageSize, cancellationToken);
+
+            return new GetProductsResult(new PaginatedResult<Product>((int)products.PageNumber, (int)products.PageSize, products.TotalItemCount, products));
         }
     }
 }

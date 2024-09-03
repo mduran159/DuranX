@@ -11,10 +11,13 @@ internal class InitialData
     public static IEnumerable<Product> Products =>
         new List<Product>
         {
-            Product.Create(ProductId.Of(new Guid("5334c996-8457-4cf0-815c-ed2b77c4ff61")), "IPhone X", 500),
-            Product.Create(ProductId.Of(new Guid("c67d6323-e8b1-4bdf-9a75-b0d0d2e7e914")), "Samsung 10", 400),
+            Product.Create(ProductId.Of(new Guid("5334c996-8457-4cf0-815c-ed2b77c4ff61")), "IPhone X", 950),
+            Product.Create(ProductId.Of(new Guid("c67d6323-e8b1-4bdf-9a75-b0d0d2e7e914")), "Samsung 10", 840),
             Product.Create(ProductId.Of(new Guid("4f136e9f-ff8c-4c1f-9a33-d12f689bdab8")), "Huawei Plus", 650),
-            Product.Create(ProductId.Of(new Guid("6ec1297b-ec0a-4aa1-be25-6726e3b51a27")), "Xiaomi Mi", 450)
+            Product.Create(ProductId.Of(new Guid("6ec1297b-ec0a-4aa1-be25-6726e3b51a27")), "Xiaomi Mi 9", 470),
+            Product.Create(ProductId.Of(new Guid("b786103d-c621-4f5a-b498-23452610f88c")), "HTC U11+ Plus", 380),
+            Product.Create(ProductId.Of(new Guid("c4bbc4a2-4555-45d8-97cc-2a99b2167bff")), "LG G7 ThinQ", 240),
+            Product.Create(ProductId.Of(new Guid("93170c85-7795-489c-8e8f-7dcf3b4f4188")), "Panasonic Lumix", 240)
         };
 
     public static IEnumerable<OrderEntity> OrdersWithItems

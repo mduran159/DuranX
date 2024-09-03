@@ -1,4 +1,6 @@
-namespace Shopping.Web.Pages
+using Shopping.Web.Extensions;
+
+namespace Shopping.Web.Pages.Cart
 {
     [Authorize]
     public class CheckoutModel
@@ -6,7 +8,7 @@ namespace Shopping.Web.Pages
         : PageModel
     {
         [BindProperty]
-        public CartCheckoutModel Order { get; set; } = default!;        
+        public CartCheckoutModel Order { get; set; } = default!;
         public ShoppingCartModel Cart { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync()
@@ -28,7 +30,7 @@ namespace Shopping.Web.Pages
             }
 
             // assumption customerId is passed in from the UI authenticated user swn        
-            Order.CustomerId = new Guid("58c49479-ec65-4de2-86e7-033c546291aa");
+            Order.CustomerId = User.GetId();
             Order.UserName = Cart.UserName;
             Order.TotalPrice = Cart.TotalPrice;
 

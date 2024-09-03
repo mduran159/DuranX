@@ -1,18 +1,16 @@
-﻿namespace Inventory.API.Products.CreateProduct
-{
-    public record GetProductsRequest(int? PageNumber = 1, int? PageSize = 10);
+﻿using BuildingBlocks.WebAPI.Models.Pagination;
 
-    public record GetProductsResponse(IEnumerable<Product> Products);
+namespace Inventory.API.Products.CreateProduct
+{
+    public record GetProductsResponse(PaginatedResult<Product> Products);
 
     public class GetProductsEndpoint : ICarterModule
     {
         public void AddRoutes(IEndpointRouteBuilder app)
         {
-            app.MapGet("/products", async ([AsParameters] GetProductsRequest request, ISender sender, HttpContext httpContext) =>
+            app.MapGet("/products", async ([AsParameters] PaginationRequest request, ISender sender, HttpContext httpContext) =>
             {
-                var query = request.Adapt<GetProductsQuery>();
-
-                var result = await sender.Send(query);
+                var result = await sender.Send(new GetProductsQuery(request));
 
                 var response = result.Adapt<GetProductsResponse>();
 

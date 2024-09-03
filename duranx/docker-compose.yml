@@ -2,11 +2,11 @@ services:
   identityserverdb:
     image: mcr.microsoft.com/mssql/server
 
-  identityserver:
-    image: ${DOCKER_REGISTRY-}openiddictserver
-    build:
-      context: .
-      dockerfile: Identity/Openiddict/Dockerfile
+  # identityserver:
+  #   image: ${DOCKER_REGISTRY-}openiddictserver
+  #   build:
+  #     context: .
+  #     dockerfile: Identity/Openiddict/Dockerfile
 
   inventorydb: 
      image: postgres

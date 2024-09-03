@@ -1,4 +1,4 @@
-namespace Shopping.Web.Pages
+namespace Shopping.Web.Pages.Cart
 {
     public class ConfirmationModel : PageModel
     {

@@ -12,7 +12,6 @@ WORKDIR /src
 COPY ["Services/Order/Order.API/Order.API.csproj", "Services/Order/Order.API/"]
 COPY ["Services/Order/Order.Application/Order.Application.csproj", "Services/Order/Order.Application/"]
 COPY ["BuildingBlocks/BuildingBlocks.Messaging/BuildingBlocks.Messaging.csproj", "BuildingBlocks/BuildingBlocks.Messaging/"]
-COPY ["BuildingBlocks/BuildingBlocks.Common/BuildingBlocks.Common.csproj", "BuildingBlocks/BuildingBlocks.Common/"]
 COPY ["BuildingBlocks/BuildingBlocks.WebAPI/BuildingBlocks.WebAPI.csproj", "BuildingBlocks/BuildingBlocks.WebAPI/"]
 COPY ["Services/Order/Order.Domain/Order.Domain.csproj", "Services/Order/Order.Domain/"]
 COPY ["Services/Order/Order.Infrastructure/Order.Infrastructure.csproj", "Services/Order/Order.Infrastructure/"]
