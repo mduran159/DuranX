@@ -2,6 +2,6 @@
 {
     public interface IProductItemPartialView
     {
-        Task<IActionResult> OnPostAddToCartAsync(Guid productId);
+        Task<IActionResult> OnPostAddToCartAsync(Guid productId, int quantity = 1);
     }
 }

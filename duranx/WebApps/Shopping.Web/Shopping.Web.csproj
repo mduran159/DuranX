@@ -11,20 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Pages\Index.cshtml.cs~RF247743c2.TMP" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Pages\Products\CreateProduct.cshtml" />
-    <None Include="Pages\Products\EditProduct.cshtml" />
-    <None Include="Pages\Products\ProductDetail.cshtml" />
-    <None Include="Pages\Products\ProductsList.cshtml" />
-    <None Include="Pages\Products\Shared\_ProductForm.cshtml" />
-    <None Include="Pages\Products\Shared\_ProductItemPartial.cshtml" />
-    <None Include="Pages\Products\Shared\_TopProductPartial.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Google.Apis.Drive.v3" Version="1.68.0.3508" />
     <PackageReference Include="IdentityModel" Version="7.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.7" />

@@ -1,4 +1,5 @@
 ﻿@page "/Products"
+@using Shopping.Web.Models.Page
 @model Shopping.Web.Pages.Products.ProductListModel
 @{
     ViewData["Title"] = "Product";
@@ -51,33 +52,24 @@
                 @foreach (var product in Model.ProductList)
                 {
                     <div class="col-12 col-md-6 col-lg-4">
-                        <partial name="Products/Shared/_ProductItemPartial" model="@product" />
+                        <partial name="Products/Shared/_ProductItem" model="@product" />
                     </div>
                 }
 
-                <div class="col-12">
-                    <nav aria-label="...">
-                        <ul class="pagination">
-                            <li class="page-item @(Model.PageIndex == 1 ? "disabled" : "")">
-                                <a class="page-link" asp-page="/Products/ProductsList" asp-route-categoryName="@Model.SelectedCategory" asp-route-pageIndex="@(Model.PageIndex - 1)" asp-route-pageSize="@Model.PageSize">Previous</a>
-                            </li>
-                            @for (int i = 1; i <= Model.TotalPages; i++)
-                            {
-                                <li class="page-item @(Model.PageIndex == i ? "active" : "")">
-                                    <a class="page-link" asp-page="/Products/ProductsList" asp-route-categoryName="@Model.SelectedCategory" asp-route-pageIndex="@i" asp-route-pageSize="@Model.PageSize">@i</a>
-                                </li>
-                            }
-                            <li class="page-item @(Model.PageIndex == Model.TotalPages ? "disabled" : "")">
-                                <a class="page-link" asp-page="/Products/ProductsList" asp-route-categoryName="@Model.SelectedCategory" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-pageSize="@Model.PageSize">Next</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
+                @await Html.PartialAsync("../Shared/_Pagination", new PaginationModel
+                {
+                    PageIndex = Model.PageIndex,
+                    PageSize = Model.PageSize,
+                    TotalPages = Model.TotalPages,
+                    PageName = "/Products/ProductsList"
+                })
             </div>
         </div>
 
     </div>
 </div>
+
+@await Html.PartialAsync("Products/Shared/_ProductModal")
 
 @section Scripts {
     <script>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Shopping.Web.Models.Page;
 
 namespace Shopping.Web.Models.Inventory;
 

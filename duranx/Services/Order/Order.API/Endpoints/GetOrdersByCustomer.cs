@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BuildingBlocks.WebAPI.Models.Pagination;
+using Microsoft.AspNetCore.Authorization;
 using Order.Application.Orders.Queries.GetOrdersByCustomer;
 
 namespace Order.API.Endpoints;
@@ -8,15 +9,15 @@ namespace Order.API.Endpoints;
 //- Returns the list of orders for that customer.
 
 //public record GetOrdersByCustomerRequest(Guid CustomerId);
-public record GetOrdersByCustomerResponse(IEnumerable<OrderDto> Orders);
+public record GetOrdersByCustomerResponse(PaginatedResult<OrderDto> Orders);
 
 public class GetOrdersByCustomer : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/orders/customer/{customerId}", [Authorize(Policy = "OrderReadable")] async (Guid customerId, ISender sender) =>
+        app.MapGet("/orders/customer/{customerId}", [Authorize(Policy = "OrderReadable")] async (Guid customerId, [AsParameters] PaginationRequest request, ISender sender) =>
         {
-            var result = await sender.Send(new GetOrdersByCustomerQuery(customerId));
+            var result = await sender.Send(new GetOrdersByCustomerQuery(customerId, request));
 
             var response = result.Adapt<GetOrdersByCustomerResponse>();
 

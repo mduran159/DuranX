@@ -1,0 +1,28 @@
+﻿@page "/Security"
+@model Shopping.Web.Pages.SecurityModel
+@{
+    ViewData["Title"] = "Security";
+}
+
+<div class="container">
+    <h2>Session Data</h2>
+    <div>
+        <h3>Claims</h3>
+        <ul>
+            @foreach (var claim in Model.Session.Claims)
+            {
+                <li>@claim.Type: @claim.Value</li>
+            }
+        </ul>
+    </div>
+    <div>
+        <h3>Metadata</h3>
+        <ul>
+            @foreach (var item in Model.Session.Metadata)
+            {
+                <li>@item.Key: @item.Value</li>
+            }
+        </ul>
+    </div>
+    <h3>Current time: @DateTimeOffset.UtcNow</h3>
+</div>

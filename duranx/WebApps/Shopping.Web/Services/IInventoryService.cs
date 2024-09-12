@@ -9,7 +9,7 @@ public interface IInventoryService
     Task<GetProductByIdResponse> GetProduct(Guid id);
     
     [Get("/inventory-service/products/category/{category}?pageIndex={pageIndex}&pageSize={pageSize}")]
-    Task<GetProductByCategoryResponse> GetProductsByCategory(string category, int? pageIndex = 1, int? pageSize = 10);
+    Task<GetProductByCategoryResponse> GetProductsByCategory(string category, int? pageIndex = 1, int? pageSize = 5);
 
     [Post("/inventory-service/products")]
     Task SaveProduct(SaveProductRequest request);

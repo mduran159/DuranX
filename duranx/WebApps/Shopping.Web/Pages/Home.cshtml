@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <partial name="Products/Shared/_TopProductPartial" model="Model.ProductList.FirstOrDefault()" />
+        <partial name="Products/Shared/_TopProduct" model="Model.ProductList.FirstOrDefault()" />
 
     </div>
 </div>
@@ -50,7 +50,7 @@
                         @foreach (var product in Model.ProductList.Take(4))
                         {
                             <div class="col-sm-3">
-                                <partial name="Products/Shared/_ProductItemPartial" model="@product" />
+                                <partial name="Products/Shared/_ProductItem" model="@product" />
                             </div>
                         }
 
@@ -74,7 +74,7 @@
                         @foreach (var product in Model.ProductList.TakeLast(4))
                         {
                             <div class="col-sm-3">
-                                <partial name="Products/Shared/_ProductItemPartial" model="@product" />
+                                <partial name="Products/Shared/_ProductItem" model="@product" />
                             </div>
                         }
 

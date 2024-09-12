@@ -4,17 +4,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Logging;
-using Microsoft.IdentityModel.Tokens;
-using NuGet.Packaging;
 using OpenIddict.Client;
 using OpenIddict.Validation;
 using OpeniddictServer.Configuration;
 using OpeniddictServer.Data;
 using OpeniddictServer.Extensions;
 using OpeniddictServer.Handlers;
-using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
-using static OpenIddict.Abstractions.OpenIddictConstants;
 using static OpenIddict.Server.OpenIddictServerEvents;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -52,48 +48,7 @@ builder.Services.AddAuthentication(options =>
     options.LoginPath = "/Login"; // Ruta para redirigir cuando el usuario no est� autenticado
     options.LogoutPath = "/Logout"; // Ruta para manejar el cierre de sesi�n
     options.AccessDeniedPath = "/AccessDenied"; // Ruta para acceso denegado
-    options.ExpireTimeSpan = TimeSpan.FromHours(1);
-    options.SlidingExpiration = true;
-})
-.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
-{
-    // Configuraci�n OpenID Connect para el cliente ShoppingWeb
-    // La URL del servidor de autorizaci�n OpenID Connect (OpeniddictServer)
-    options.Authority = openIddictConfig["Issuer"];
-
-    // El identificador del cliente registrado en el servidor OpenID Connect
-    options.ClientId = shoppingClient!.ClientId;
-
-    // El secreto del cliente registrado en el servidor OpenID Connect
-    options.ClientSecret = shoppingClient.ClientSecret;
-
-    // El tipo de respuesta solicitado al servidor de autorizaci�n
-    options.ResponseType = Parameters.Code; // C�digo de autorizaci�n
-
-    // Indica que se deben guardar los tokens en la sesi�n de autenticaci�n
-    options.SaveTokens = true;
-
-    // Alcances solicitados
-    options.Scope.AddRange(OpeniddictServer.Extensions.ConfigurationExtensions.GetDefaultAuthorizationCodeScopes());
-    options.Scope.AddRange(shoppingClient.Scopes);
-
-    // Indica si se deben obtener los claims del endpoint de informaci�n del usuario
-    options.GetClaimsFromUserInfoEndpoint = true;
-
-    // Configuraci�n de validaci�n de tokens
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        NameClaimType = ClaimTypes.Name, // El claim que se utilizar� como nombre del usuario
-        RoleClaimType = ClaimTypes.Role, // El claim que se utilizar� como rol del usuario
-        TokenDecryptionKey = new X509SecurityKey(encryptionCert),
-        IssuerSigningKey = new X509SecurityKey(signingCert),
-    };
-
-    // La ruta a la que el servidor de autorizaci�n redirigir� despu�s de la autenticaci�n
-    options.CallbackPath = "/signin-oidc";
-
-    // La URL a la que el usuario ser� redirigido despu�s de cerrar sesi�n
-    options.SignedOutRedirectUri = "/Home";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
 });
 
 builder.Services.AddOpenIddict()
@@ -105,19 +60,19 @@ builder.Services.AddOpenIddict()
     .AddServer(options =>
     {
         options.AllowClientCredentialsFlow()
-               .AllowAuthorizationCodeFlow()
-               .AllowRefreshTokenFlow();
+                .AllowAuthorizationCodeFlow()
+                .AllowRefreshTokenFlow();
 
         options.SetIssuer(new Uri(openIddictConfig["Issuer"]!));
 
         options.SetAuthorizationEndpointUris(openIddictConfig["AuthorizationEndpointUri"]!)
-               .SetLogoutEndpointUris(openIddictConfig["LogoutEndpointUri"]!)
-               .SetTokenEndpointUris(openIddictConfig["TokenEndpointUri"]!);
+                .SetLogoutEndpointUris(openIddictConfig["LogoutEndpointUri"]!)
+                .SetTokenEndpointUris(openIddictConfig["TokenEndpointUri"]!);
 
         options.RegisterScopes(openIddictConfig.GetSection("Scopes").Get<string[]>()!);
 
         options.AddSigningCertificate(new X509Certificate2(signingCertificate["Path"], signingCertificate["Password"]))
-               .AddEncryptionCertificate(new X509Certificate2(encryptionCertificate["Path"]!, encryptionCertificate["Password"]));
+                .AddEncryptionCertificate(new X509Certificate2(encryptionCertificate["Path"]!, encryptionCertificate["Password"]));
 
         options.UseAspNetCore();
 
@@ -129,6 +84,10 @@ builder.Services.AddOpenIddict()
 
         options.AddEventHandler<HandleLogoutRequestContext>(options =>
             options.UseScopedHandler<LogoutRequestHandler>());
+
+        options.SetAccessTokenLifetime(TimeSpan.FromMinutes(5))
+               .SetRefreshTokenLifetime(TimeSpan.FromDays(1))
+               .SetIdentityTokenLifetime(TimeSpan.FromMinutes(5));
     })
     .AddValidation(options =>
     {
@@ -140,7 +99,7 @@ builder.Services.AddOpenIddict()
         options.AllowAuthorizationCodeFlow();
 
         options.AddSigningCertificate(new X509Certificate2(signingCertificate["Path"]!, signingCertificate["Password"]))
-               .AddEncryptionCertificate(new X509Certificate2(encryptionCertificate["Path"]!, encryptionCertificate["Password"]));
+                .AddEncryptionCertificate(new X509Certificate2(encryptionCertificate["Path"]!, encryptionCertificate["Password"]));
 
         options.UseAspNetCore();
         options.UseSystemNetHttp();

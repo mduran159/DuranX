@@ -1,4 +1,6 @@
-﻿namespace Shopping.Web.Models.Order;
+﻿using Shopping.Web.Models.Page;
+
+namespace Shopping.Web.Models.Order;
 
 public record OrderModel(
     Guid Id,
@@ -26,6 +28,6 @@ public enum OrderStatus
 
 //wrapper classes
 public record GetOrdersResponse(PaginatedResult<OrderModel> Orders);
-public record GetOrdersByNameResponse(IEnumerable<OrderModel> Orders);
-public record GetOrdersByCustomerResponse(IEnumerable<OrderModel> Orders);
+public record GetOrdersByNameResponse(PaginatedResult<OrderModel> Orders);
+public record GetOrdersByCustomerResponse(PaginatedResult<OrderModel> Orders);
 

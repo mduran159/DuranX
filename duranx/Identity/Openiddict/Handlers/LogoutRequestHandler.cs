@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using OpenIddict.Server;
+using OpenIddict.Server.AspNetCore;
 using static OpenIddict.Server.OpenIddictServerEvents;
 
 namespace OpeniddictServer.Handlers
@@ -21,15 +22,8 @@ namespace OpeniddictServer.Handlers
 
             // Sign out the user
             await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            //await httpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+            await httpContext.SignOutAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
             context.HandleRequest();
-
-            // Redirect to the post-logout redirect URI
-            var postLogoutRedirectUri = context.Request.PostLogoutRedirectUri;
-            if (!string.IsNullOrEmpty(postLogoutRedirectUri))
-            {
-                httpContext.Response.Redirect(postLogoutRedirectUri);
-            }
             return;
         }
     }

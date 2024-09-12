@@ -15,7 +15,7 @@ namespace Shopping.Web.Models.Page.Products
             _logger = logger;
         }
 
-        public async Task<IActionResult> OnPostAddToCartAsync(Guid productId)
+        public async Task<IActionResult> OnPostAddToCartAsync(Guid productId, int quantity = 1)
         {
             var authorizationResult = CheckAuthorization();
             if (authorizationResult is not null)
@@ -29,9 +29,10 @@ namespace Shopping.Web.Models.Page.Products
 
             var cart = await _cartService.LoadUserCart(User);
 
-            if(cart.Items.Any(x => x.ProductId.Equals(productId)))
+            var existingItem = cart.Items.FirstOrDefault(x => x.ProductId.Equals(productId));
+            if (existingItem is not null)
             {
-                cart.Items.FirstOrDefault(x => x.ProductId.Equals(productId));
+                existingItem.Quantity += quantity;
             }
             else
             {
@@ -40,7 +41,7 @@ namespace Shopping.Web.Models.Page.Products
                     ProductId = productId,
                     ProductName = productResponse.Product.Name,
                     Price = productResponse.Product.Price,
-                    Quantity = 1,
+                    Quantity = quantity,
                 });
             }
 
@@ -49,13 +50,20 @@ namespace Shopping.Web.Models.Page.Products
             return RedirectToPage("/Cart/Cart");
         }
 
-        private IActionResult CheckAuthorization()
+        private IActionResult? CheckAuthorization()
         {
             if (!User.Identity!.IsAuthenticated)
             {
                 return RedirectToAction("Login", "Account", new { returnUrl = HttpContext.Request.Path });
             }
             return null;
+        }
+
+        public async Task<IActionResult> OnGetProductDetailAsync(Guid productId)
+        {
+            var response = await _inventoryService.GetProduct(productId);
+
+            return Partial("Products/Shared/_ProductDetail", response.Product);
         }
     }
 }

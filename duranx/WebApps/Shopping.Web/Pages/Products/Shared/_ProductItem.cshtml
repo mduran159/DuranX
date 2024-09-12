@@ -1,9 +1,13 @@
 ﻿@model Models.Inventory.ProductModel
 
 <div class="card h-100">
-    <a style="align-self: center" asp-page="ProductDetail" asp-route-productId="@Model.Id"><img src="@Url.Content($"{Model.ImageFile}&sz=w235-h157")" alt="alternative text" /></a>
+    <a style="align-self: center" href="javascript:void(0);" onclick="loadProductDetail('@Model.Id')">
+        <img src="@Url.Content($"{Model.ImageFile}&sz=w235-h157")" alt="alternative text" />
+    </a>
     <div class="card-body">
-        <h4 class="card-title"><a asp-page="ProductDetail" asp-route-productId="@Model.Id" class="color-main">@Model.Name</a></h4>
+        <h4 class="card-title">
+            <a href="javascript:void(0);" onclick="loadProductDetail('@Model.Id')" class="color-main">@Model.Name</a>
+        </h4>
         <p class="card-text">@Model.Description</p>
     </div>
     <div class="card-footer">

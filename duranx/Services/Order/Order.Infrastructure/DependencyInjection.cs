@@ -70,7 +70,8 @@ public static class DependencyInjection
                 TokenDecryptionKey = new X509SecurityKey(new X509Certificate2(
                     jwtBearerConfig.GetSection("Certificates:Encryption:Path").Value!,
                     jwtBearerConfig.GetSection("Certificates:Encryption:Password").Value!
-                ))
+                )),
+                ClockSkew = TimeSpan.FromMinutes(0)
             };
         });
 

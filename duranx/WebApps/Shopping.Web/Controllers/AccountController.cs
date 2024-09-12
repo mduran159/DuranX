@@ -31,16 +31,5 @@ namespace Shopping.Web.Controllers
                            OpenIdConnectDefaults.AuthenticationScheme,
                            CookieAuthenticationDefaults.AuthenticationScheme);
         }
-
-        [HttpGet]
-        public IActionResult LogoutCallBack()
-        {
-            // Redirige al servidor OpenIddict para el logout
-            var callbackUrl = "/Home";
-
-            // Cerrar sesión en la aplicación y redirigir al servidor de OpenIddict para cerrar sesión allí también
-            return Redirect(callbackUrl);
-        }
     }
-
 }

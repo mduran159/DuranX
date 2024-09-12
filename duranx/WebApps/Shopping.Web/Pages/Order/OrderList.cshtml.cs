@@ -9,8 +9,19 @@ namespace Shopping.Web.Pages.Order
     {
         public IEnumerable<OrderModel> Orders { get; set; } = default!;
 
-        public async Task<IActionResult> OnGetAsync(int? pageIndex = 1, int? pageSize = 10)
+        [BindProperty(SupportsGet = true)]
+        public int PageIndex { get; set; } = 1;
+
+        [BindProperty(SupportsGet = true)]
+        public int PageSize { get; set; } = 5;
+
+        public int TotalPages { get; set; }
+
+        public async Task<IActionResult> OnGetAsync(int? pageIndex = 1, int? pageSize = 5)
         {
+            PageSize = pageSize ?? 5;
+            PageIndex = pageIndex ?? 1;
+
             // assumption customerId is passed in from the UI authenticated user swn
             if (User.IsInRole(Roles.Admin))
             {
@@ -19,8 +30,8 @@ namespace Shopping.Web.Pages.Order
             }
             else
             {
-                var response = await orderService.GetOrdersByCustomer(User.GetId());
-                Orders = response.Orders;
+                var response = await orderService.GetOrdersByCustomer(User.GetId(), pageIndex, pageSize);
+                Orders = response.Orders.Data;
             }
 
             return Page();

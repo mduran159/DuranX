@@ -1,0 +1,29 @@
+﻿@model Shopping.Web.Models.Page.PaginationModel
+
+<div class="col-12">
+    <nav aria-label="...">
+        <ul class="pagination" style="justify-content: center;">
+            <li class="page-item @(Model.PageIndex == 1 ? "disabled" : "")">
+                <a class="page-link" asp-page="@Model.PageName" asp-route-pageIndex="@(Model.PageIndex - 1)" asp-route-pageSize="@Model.PageSize">Previous</a>
+            </li>
+            @if (Model.TotalPages == 0)
+            {
+                <li class="page-item active disabled">
+                    <a class="page-link" asp-page="@Model.PageName" asp-route-pageIndex="1" asp-route-pageSize="@Model.PageSize">1</a>
+                </li>
+            }
+            else
+            {
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(Model.PageIndex == i ? "active" : "")">
+                        <a class="page-link" asp-page="@Model.PageName" asp-route-pageIndex="@i" asp-route-pageSize="@Model.PageSize">@i</a>
+                    </li>
+                }
+            }
+            <li class="page-item @(Model.PageIndex == Model.TotalPages || Model.TotalPages == 0 ? "disabled" : "")">
+                <a class="page-link" asp-page="@Model.PageName" asp-route-pageIndex="@(Model.PageIndex + 1)" asp-route-pageSize="@Model.PageSize">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>

@@ -15,39 +15,36 @@ IdentityModelEventSource.LogCompleteSecurityArtifact = true;
 builder.Services.AddRazorPages();
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddTransient<AuthHeaderHandler>();
+builder.Services.AddTransient<AuthHandler>();
 
 builder.Services.AddRefitClient<IInventoryService>()
     .ConfigureHttpClient(c =>
     {
         c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
     })
-    .AddHttpMessageHandler<AuthHeaderHandler>();
+    .AddHttpMessageHandler<AuthHandler>();
 
 builder.Services.AddRefitClient<ICartService>()
     .ConfigureHttpClient(c =>
     {
         c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
     })
-    .AddHttpMessageHandler<AuthHeaderHandler>(); 
+    .AddHttpMessageHandler<AuthHandler>(); 
 
 builder.Services.AddRefitClient<IOrderService>()
     .ConfigureHttpClient(c =>
     {
         c.BaseAddress = new Uri(builder.Configuration["ApiSettings:GatewayAddress"]!);
     })
-    .AddHttpMessageHandler<AuthHeaderHandler>(); ;
+    .AddHttpMessageHandler<AuthHandler>();
 
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
 })
-.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-{
-    options.LoginPath = "/Login"; // Redirige a esta ruta para el inicio de sesión
-})
-.AddOpenIdConnect(options =>
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+.AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
     var authenticationConfig = builder.Configuration.GetSection("Authentication");
     options.Authority = authenticationConfig["Authority"];
@@ -62,17 +59,12 @@ builder.Services.AddAuthentication(options =>
         options.Scope.Add(scope);
     }
 
-    options.GetClaimsFromUserInfoEndpoint = false;
-
     options.TokenValidationParameters = new TokenValidationParameters
     {
         NameClaimType = ClaimTypes.Name,
         RoleClaimType = ClaimTypes.Role,
+        ClockSkew = TimeSpan.FromMinutes(0)
     };
-    // Usa los valores de appsettings.json para CallbackPath y PostLogoutRedirectUri
-    options.CallbackPath = new PathString("/signin-oidc");
-    options.SignedOutCallbackPath = new PathString("/Account/LogoutCallBack");
-    options.SignedOutRedirectUri = "https://shopping:6065/Home";
 });
 
 builder.Services.AddAuthorization();

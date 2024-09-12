@@ -1,0 +1,45 @@
+﻿@model Shopping.Web.Models.Inventory.ProductModel
+
+<div class="row">
+    <!-- Image -->
+    <div class="col-12 col-lg-6">
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <img class="img-fluid" src="@Url.Content($"{Model.ImageFile}&sz=w235-h157")" alt="alternative text" />
+                <p class="text-center">@Model.Name</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add to cart -->
+    <div class="col-12 col-lg-6 add_to_cart_block">
+        <div class="card bg-light mb-3">
+            <div class="card-body">
+                <p class="price">@Model.Price $</p>
+                <p class="price_discounted">@(Model.Price + 120) $</p>
+                <form asp-page-handler="AddToCart" method="post" name="addToCartForm" id="add_cart_form">
+                    <div class="form-group">
+                        <label>Quantity :</label>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                            </div>
+                            <input type="number" class="form-control" id="quantity" name="quantity" min="1" max="100" value="1" />
+                            <div class="input-group-append">
+                                <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="javascript:;" onclick="parentNode.submit();" class="btn btn-success btn-lg btn-block text-uppercase">
+                        <i class="fa fa-shopping-cart"></i> Add To Cart
+                    </a>
+                    <input type="hidden" asp-for="@Model.Id" name="productId" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
