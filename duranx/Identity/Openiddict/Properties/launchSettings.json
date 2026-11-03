@@ -4,7 +4,7 @@
       "commandName": "Project",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_Kestrel__Certificates__Default__Path": "C:\\Users\\User\\Documents\\NetProjects\\duranx\\Certificates\\server.pfx",
+        "ASPNETCORE_Kestrel__Certificates__Default__Path": "C:\\Users\\User\\Documents\\NetProjects\\duranx\\Certificates\\tls-identityserver.pfx",
         "ASPNETCORE_Kestrel__Certificates__Default__Password": "duranxpassword"
       },
       "dotnetRunMessages": true,
@@ -15,7 +15,7 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_Kestrel__Certificates__Default__Path": "C:\\Users\\User\\Documents\\NetProjects\\duranx\\Certificates\\server.pfx",
+        "ASPNETCORE_Kestrel__Certificates__Default__Path": "C:\\Users\\User\\Documents\\NetProjects\\duranx\\Certificates\\tls-identityserver.pfx",
         "ASPNETCORE_Kestrel__Certificates__Default__Password": "duranxpassword"
       }
     },

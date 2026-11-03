@@ -30,15 +30,12 @@ namespace BuildingBlocks.Cache.Redis
 
             };
 
-            redisOptions.CertificateValidation += (sender, certificate, chain, sslPolicyErrors) =>
-                CertificateValidations.ValidateServerCertificateBasic(certificate, sslPolicyErrors, redisConfig["CACertPath"]!);
-
             var multiplexer = ConnectionMultiplexer.Connect(redisOptions);
             services.AddSingleton<IConnectionMultiplexer>(multiplexer);
 
             services.AddSingleton<IDistributedCache>(new RedisCache(new RedisCacheOptions
             {
-                Configuration = configuration.GetConnectionString("Redis"),
+                ConnectionMultiplexerFactory = () => Task.FromResult<IConnectionMultiplexer>(multiplexer),
                 InstanceName = "Cart:",
             }));
 

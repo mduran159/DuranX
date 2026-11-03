@@ -28,3 +28,6 @@ README.md
 !.git/config
 !.git/packed-refs
 !.git/refs/heads/**
+# Solo la CA publica entra al contexto de build.
+Certificates/**
+!Certificates/duranx-ca-trust.crt

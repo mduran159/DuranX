@@ -6,6 +6,7 @@
     <DockerPublishLocally>False</DockerPublishLocally>
     <ProjectGuid>a9819de6-3ac2-4498-97f4-b2ac2886556c</ProjectGuid>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
+    <DockerComposeProjectName>duranx</DockerComposeProjectName>
   </PropertyGroup>
   <PropertyGroup>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>

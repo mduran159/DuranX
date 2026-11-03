@@ -10,62 +10,65 @@ services:
     networks:
       - mynetwork
 
-  # identityserver:
-  #   container_name: identityserver
-  #   hostname: identityserver
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-  #     - ASPNETCORE_HTTPS_PORTS=6066
-  #     - ASPNETCORE_Kestrel__Certificates__Default__Path=/usr/local/share/ca-certificates/server.pfx
-  #     - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
-  #     - ConnectionStrings__Database=Server=identityserverdb;Database=OpeniddictServer;User Id=sa;Password=Admin12345678!;Encrypt=False;TrustServerCertificate=True
-  #     - OpenIddict__Issuer=https://identityserver:6066/
-  #     - OpenIddict__Certificates__Signing__Path=/usr/local/share/ca-certificates/server.pfx
-  #     - OpenIddict__Certificates__Signing__Password=duranxpassword
-  #     - OpenIddict__Certificates__Encryption__Path=/usr/local/share/ca-certificates/server-encryption.pfx
-  #     - OpenIddict__Certificates__Encryption__Password=duranxpassword
-  #     - OpenIddict__DataProtectionKeyDir=/app/keys
-  #     - OpenIddict__Clients__0__ClientId=shopping_client
-  #     - OpenIddict__Clients__0__RedirectUri=https://shopping:6065/signin-oidc
-  #     - OpenIddict__Clients__0__PostLogoutRedirectUri=https://shopping:6065/signout-callback-oidc
-  #   ports:
-  #     - "6066:6066"
-  #     - "4020:4020"
-  #   depends_on:
-  #     - identityserverdb
-  #   volumes:
-  #     - c:\users\user\documents\netprojects\duranx\certificates:/app/certificates
-  #     - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-  #     - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-  #     - C:\Users\User\Documents\NetProjects\duranx\Identity\IdentityServer\DataProtectionKeys:/app/keys
-  #   networks:
-  #     mynetwork:
-  #       ipv4_address: 172.28.0.14
-  #   extra_hosts:
-  #     - "shopping:172.28.0.10"
-  #     - "inventory:172.28.0.11"
-  #     - "cart:172.28.0.12"
-  #     - "order:172.28.0.13"
-  #     - "identityserver:172.28.0.14"
-  #     - "yarpapigateway:172.28.0.15"
-  #     - "rabbitmq:172.28.0.16"
-  #     - "redis:172.28.0.17"
+  identityserver:
+    container_name: identityserver
+    hostname: identityserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTPS_PORTS=6066
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/certs/tls-identityserver.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
+      - ConnectionStrings__Database=Server=identityserverdb;Database=OpeniddictServer;User Id=sa;Password=Admin12345678!;Encrypt=False;TrustServerCertificate=True
+      - OpenIddict__Issuer=https://identityserver:6066/
+      - OpenIddict__Certificates__Signing__Path=/certs/openid-signing.pfx
+      - OpenIddict__Certificates__Signing__Password=duranxpassword
+      - OpenIddict__Certificates__Encryption__Path=/certs/openid-encryption.pfx
+      - OpenIddict__Certificates__Encryption__Password=duranxpassword
+      - OpenIddict__DataProtectionKeyDir=/app/keys
+      - OpenIddict__Clients__0__ClientId=shopping_client
+      - OpenIddict__Clients__0__RedirectUri=https://shopping:6065/signin-oidc
+      - OpenIddict__Clients__0__PostLogoutRedirectUri=https://shopping:6065/signout-callback-oidc
+    ports:
+      - "6066:6066"
+      - "4020:4020"
+    depends_on:
+      - identityserverdb
+    volumes:
+      - ./Certificates/tls-identityserver.pfx:/certs/tls-identityserver.pfx:ro
+      - ./Certificates/openid-signing.pfx:/certs/openid-signing.pfx:ro
+      - ./Certificates/openid-encryption.pfx:/certs/openid-encryption.pfx:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - C:\Users\User\Documents\NetProjects\duranx\Identity\IdentityServer\DataProtectionKeys:/app/keys
+    networks:
+      mynetwork:
+        ipv4_address: 172.28.0.14
+    extra_hosts:
+      - "shopping:172.28.0.10"
+      - "inventory:172.28.0.11"
+      - "cart:172.28.0.12"
+      - "order:172.28.0.13"
+      - "identityserver:172.28.0.14"
+      - "yarpapigateway:172.28.0.15"
+      - "rabbitmq:172.28.0.16"
+      - "redis:172.28.0.17"
 
   rabbitmq:
     container_name: rabbitmq
     hostname: rabbitmq
     environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
+      - RABBITMQ_DEFAULT_USER=duranx
+      - RABBITMQ_DEFAULT_PASS=duranxpassword
     restart: always
     ports:
        - "5671:5671"
        - "15672:15672"
     volumes:
       - C:\Users\User\Documents\NetProjects\duranx\RabbitMQ\Log:/var/log/rabbitmq/
-      - C:\Users\User\Documents\NetProjects\duranx\Certificates:/etc/rabbitmq/ssl/
+      - ./Certificates/duranx-ca-trust.crt:/etc/rabbitmq/ssl/duranx-ca-trust.crt:ro
+      - ./Certificates/rabbitmq-server.pem:/etc/rabbitmq/ssl/rabbitmq-server.pem:ro
+      - ./Certificates/rabbitmq-server.key:/etc/rabbitmq/ssl/rabbitmq-server.key:ro
       - C:\Users\User\Documents\NetProjects\duranx\RabbitMQ\rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-    command: rabbitmq-server --ssl
     networks:
       mynetwork:
         ipv4_address: 172.28.0.16
@@ -97,31 +100,35 @@ services:
     container_name: inventory
     hostname: inventory
     environment:
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/usr/local/share/ca-certificates/server.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/certs/tls-inventory.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
       - aspnetcore_environment=development
       - aspnetcore_https_ports=6060
       - connectionstrings__database=server=inventorydb;port=5432;database=InventoryDb;user id=postgres;password=postgres;include error detail=true
       - RabbitMQ__Host=amqps://rabbitmq:5671
-      - RabbitMQ__Username=guest
-      - RabbitMQ__Password=guest
-      - RabbitMQ__Certificates__CertPath=/usr/local/share/ca-certificates/server.pfx
+      - RabbitMQ__Username=duranx
+      - RabbitMQ__Password=duranxpassword
+      - RabbitMQ__Certificates__CertPath=/certs/rabbitmq-client-inventory.pfx
       - RabbitMQ__Certificates__CertPassword=duranxpassword
-      - RabbitMQ__Certificates__CaCertPath=/usr/local/share/ca-certificates/duranxCA.crt
+      - RabbitMQ__Certificates__CaCertPath=/certs/duranx-development-root-ca.crt
       - openiddict__issuer=https://identityserver:6066/
       - jwtbearer__authority=https://identityserver:6066/
-      - jwtbearer__certificates__signing__path=/usr/local/share/ca-certificates/server.pfx
+      - jwtbearer__certificates__signing__path=/certs/openid-signing.pfx
       - jwtbearer__certificates__signing__password=duranxpassword
-      - jwtbearer__certificates__encryption__path=/usr/local/share/ca-certificates/server-encryption.pfx
+      - jwtbearer__certificates__encryption__path=/certs/openid-encryption.pfx
       - jwtbearer__certificates__encryption__password=duranxpassword
     ports:
       - "6060:6060"
       - "4023:4020"
     depends_on:
       - inventorydb
-      #- identityserver
+      - identityserver
     volumes:
-      - c:\users\user\documents\netprojects\duranx\certificates:/app/certificates
+      - ./Certificates/tls-inventory.pfx:/certs/tls-inventory.pfx:ro
+      - ./Certificates/rabbitmq-client-inventory.pfx:/certs/rabbitmq-client-inventory.pfx:ro
+      - ./Certificates/openid-signing.pfx:/certs/openid-signing.pfx:ro
+      - ./Certificates/openid-encryption.pfx:/certs/openid-encryption.pfx:ro
+      - ./Certificates/duranx-development-root-ca.crt:/certs/duranx-development-root-ca.crt:ro
       - ${appdata}/microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
       - ${appdata}/asp.net/https:/home/app/.aspnet/https:ro
     networks:
@@ -143,10 +150,13 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTPS_PORTS=6062
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/certs/tls-discount.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
       - ConnectionStrings__Database=Data Source=discountdb
     ports:
       - "6062:6062"
     volumes:
+      - ./Certificates/tls-discount.pfx:/certs/tls-discount.pfx:ro
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     networks:
@@ -157,12 +167,14 @@ services:
     hostname: redis
     restart: always
     ports:
-    - "6379:6379"  
     - "6380:6380"
     volumes:
-      - C:\Users\User\Documents\NetProjects\duranx\Certificates\duranxCA.crt:/usr/local/etc/redis/duranxCA.crt
-      - C:\Users\User\Documents\NetProjects\duranx\Certificates\server.crt:/usr/local/etc/redis/server.crt
-      - C:\Users\User\Documents\NetProjects\duranx\Certificates\server.key:/usr/local/etc/redis/server.key
+      - ./Certificates/duranx-ca-trust.crt:/usr/local/etc/redis/certs/duranx-ca-trust.crt:ro
+      - ./Certificates/redis-server.pem:/usr/local/etc/redis/certs/redis-server.pem:ro
+      - ./Certificates/redis-server.key:/usr/local/etc/redis/certs/redis-server.key:ro
+
+
+
       - C:\Users\User\Documents\NetProjects\duranx\Redis\redis.conf:/usr/local/etc/redis/redis.conf
       - C:\Users\User\Documents\NetProjects\duranx\Redis\Data:/var/lib/redis
       - C:\Users\User\Documents\NetProjects\duranx\Redis\Logs:/var/log/redis
@@ -198,29 +210,29 @@ services:
     container_name: cart
     hostname: cart
     environment:
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/usr/local/share/ca-certificates/server.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/certs/tls-cart.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
       - aspnetcore_environment=development
       - aspnetcore_https_ports=6061
       - GrpcSettings__DiscountUrl=https://discount:6062
       - connectionstrings__database=server=cartdb;port=5432;database=CartDb;user id=postgres;password=postgres;include error detail=true
-      - ConnectionStrings__Redis=redis:6379
-      - Redis__CertPath=/usr/local/share/ca-certificates/server.pfx
+      - ConnectionStrings__Redis=redis:6380,ssl=true,abortConnect=false
+      - Redis__CertPath=/certs/redis-client-cart.pfx
       - Redis__CertPassword=duranxpassword
-      - Redis__CaCertPath=/usr/local/share/ca-certificates/duranxCA.crt
-      - Redis__Host=redis
-      - Redis__Port=6379
+      - Redis__CaCertPath=/certs/duranx-development-root-ca.crt
+      - Redis__Hostname=redis
+      - Redis__Port=6380
       - Redis__Password=duranxpassword
       - RabbitMQ__Host=amqps://rabbitmq:5671
-      - RabbitMQ__Username=guest
-      - RabbitMQ__Password=guest
-      - RabbitMQ__Certificates__CertPath=/usr/local/share/ca-certificates/server.pfx
+      - RabbitMQ__Username=duranx
+      - RabbitMQ__Password=duranxpassword
+      - RabbitMQ__Certificates__CertPath=/certs/rabbitmq-client-cart.pfx
       - RabbitMQ__Certificates__CertPassword=duranxpassword
-      - RabbitMQ__Certificates__CaCertPath=/usr/local/share/ca-certificates/duranxCA.crt
+      - RabbitMQ__Certificates__CaCertPath=/certs/duranx-development-root-ca.crt
       - OpenIddict__Issuer=https://identityserver:6066/
-      - JwtBearer__Certificates__Signing__Path=/usr/local/share/ca-certificates/server.pfx
+      - JwtBearer__Certificates__Signing__Path=/certs/openid-signing.pfx
       - JwtBearer__Certificates__Signing__Password=duranxpassword
-      - JwtBearer__Certificates__Encryption__Path=/usr/local/share/ca-certificates/server-encryption.pfx
+      - JwtBearer__Certificates__Encryption__Path=/certs/openid-encryption.pfx
       - JwtBearer__Certificates__Encryption__Password=duranxpassword
     ports:
       - "6061:6061"
@@ -230,7 +242,12 @@ services:
       - redis
       - discount.grpc
     volumes:
-      - c:\users\user\documents\netprojects\duranx\certificates:/usr/local/share/ca-certificates/
+      - ./Certificates/tls-cart.pfx:/certs/tls-cart.pfx:ro
+      - ./Certificates/redis-client-cart.pfx:/certs/redis-client-cart.pfx:ro
+      - ./Certificates/rabbitmq-client-cart.pfx:/certs/rabbitmq-client-cart.pfx:ro
+      - ./Certificates/openid-signing.pfx:/certs/openid-signing.pfx:ro
+      - ./Certificates/openid-encryption.pfx:/certs/openid-encryption.pfx:ro
+      - ./Certificates/duranx-development-root-ca.crt:/certs/duranx-development-root-ca.crt:ro
       - ${appdata}/microsoft/usersecrets:/home/app/.microsoft/usersecrets:ro
       - ${appdata}/asp.net/https:/home/app/.aspnet/https:ro
     networks:
@@ -261,21 +278,21 @@ services:
     container_name: order
     hostname: order
     environment:
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/usr/local/share/ca-certificates/server.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/certs/tls-order.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
       - aspnetcore_environment=Development
       - aspnetcore_https_ports=6063
       - ConnectionStrings__Database=Server=orderdb;Database=OrderDb;User Id=sa;Password=Admin12345678!;Encrypt=False;TrustServerCertificate=True
       - RabbitMQ__Host=amqps://rabbitmq:5671
-      - RabbitMQ__Username=guest
-      - RabbitMQ__Password=guest
-      - RabbitMQ__Certificates__CertPath=/usr/local/share/ca-certificates/server.pfx
+      - RabbitMQ__Username=duranx
+      - RabbitMQ__Password=duranxpassword
+      - RabbitMQ__Certificates__CertPath=/certs/rabbitmq-client-order.pfx
       - RabbitMQ__Certificates__CertPassword=duranxpassword
-      - RabbitMQ__Certificates__CaCertPath=/usr/local/share/ca-certificates/duranxCA.crt
+      - RabbitMQ__Certificates__CaCertPath=/certs/duranx-development-root-ca.crt
       - OpenIddict__Issuer=https://identityserver:6066/
-      - JwtBearer__Certificates__Signing__Path=/usr/local/share/ca-certificates/server.pfx
+      - JwtBearer__Certificates__Signing__Path=/certs/openid-signing.pfx
       - JwtBearer__Certificates__Signing__Password=duranxpassword
-      - JwtBearer__Certificates__Encryption__Path=/usr/local/share/ca-certificates/server-encryption.pfx
+      - JwtBearer__Certificates__Encryption__Path=/certs/openid-encryption.pfx
       - JwtBearer__Certificates__Encryption__Password=duranxpassword
     depends_on:
       - orderdb
@@ -284,7 +301,11 @@ services:
       - "6063:6063"
       - "4024:4020"
     volumes:
-      - c:\users\user\documents\netprojects\duranx\certificates:/usr/local/share/ca-certificates/
+      - ./Certificates/tls-order.pfx:/certs/tls-order.pfx:ro
+      - ./Certificates/rabbitmq-client-order.pfx:/certs/rabbitmq-client-order.pfx:ro
+      - ./Certificates/openid-signing.pfx:/certs/openid-signing.pfx:ro
+      - ./Certificates/openid-encryption.pfx:/certs/openid-encryption.pfx:ro
+      - ./Certificates/duranx-development-root-ca.crt:/certs/duranx-development-root-ca.crt:ro
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     networks:
@@ -300,57 +321,61 @@ services:
       - "rabbitmq:172.28.0.16"
       - "redis:172.28.0.17"
 
-  # shopping.web:
-  #   container_name: shopping
-  #   hostname: shopping
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-  #     - ASPNETCORE_HTTPS_PORTS=6065
-  #     - Authentication__Authority=https://identityserver:6066/
-  #     - Authentication__PostLogoutRedirectUri=https://shopping:6065/signout-callback-oidc
-  #     - ASPNETCORE_Kestrel__Certificates__Default__Path=/usr/local/share/ca-certificates/server.pfx
-  #     - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
-  #     - ServerEncryptionCert__Path=/usr/local/share/ca-certificates/server-encryption.pfx
-  #     - ServerEncryptionCert__Password=duranxpassword
-  #     - DOTNET_SYSTEM_NET_HTTP_SOCKETSHTTPHANDLER_LOGGING=1
-  #     - DOTNET_SYSTEM_NET_HTTP_SOCKETSHTTPHANDLER_LOGGING_PATH=/var/michael
-  #     - ApiSettings__GatewayAddress=https://yarpapigateway:6064
-  #   ports:
-  #     - "6065:6065"
-  #     - "4021:4020"
-  #   volumes:
-  #     - c:\users\user\documents\netprojects\duranx\certificates:/app/certificates
-  #     - C:\Users\User\Documents\NetProjects\duranx\WebApps\Shopping.Web\Logs:/var/michael
-  #     - C:\Users\User\Documents\NetProjects\duranx\WebApps\Shopping.Web\DataProtection-Keys\:/root/.aspnet/DataProtection-Keys/
-  #     - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
-  #     - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
-  #   networks:
-  #     mynetwork:
-  #       ipv4_address: 172.28.0.10
-  #   extra_hosts:
-  #     - "shopping:172.28.0.10"
-  #     - "inventory:172.28.0.11"
-  #     - "cart:172.28.0.12"
-  #     - "order:172.28.0.13"
-  #     - "identityserver:172.28.0.14"
-  #     - "yarpapigateway:172.28.0.15"
-  #     - "rabbitmq:172.28.0.16"
-  #     - "redis:172.28.0.17"
+  shopping.web:
+    container_name: shopping
+    hostname: shopping
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTPS_PORTS=6065
+      - Authentication__Authority=https://identityserver:6066/
+      - Authentication__PostLogoutRedirectUri=https://shopping:6065/signout-callback-oidc
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/certs/tls-shopping.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
+      - ServerEncryptionCert__Path=/certs/dataprotection.pfx
+      - ServerEncryptionCert__Password=duranxpassword
+      - DOTNET_SYSTEM_NET_HTTP_SOCKETSHTTPHANDLER_LOGGING=1
+      - DOTNET_SYSTEM_NET_HTTP_SOCKETSHTTPHANDLER_LOGGING_PATH=/var/michael
+      - ApiSettings__GatewayAddress=https://yarpapigateway:6064
+    ports:
+      - "6065:6065"
+      - "4021:4020"
+    volumes:
+      - ./Certificates/tls-shopping.pfx:/certs/tls-shopping.pfx:ro
+      - ./Certificates/dataprotection.pfx:/certs/dataprotection.pfx:ro
+      - C:\Users\User\Documents\NetProjects\duranx\WebApps\Shopping.Web\Logs:/var/michael
+      - C:\Users\User\Documents\NetProjects\duranx\WebApps\Shopping.Web\DataProtection-Keys\:/root/.aspnet/DataProtection-Keys/
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      mynetwork:
+        ipv4_address: 172.28.0.10
+    extra_hosts:
+      - "shopping:172.28.0.10"
+      - "inventory:172.28.0.11"
+      - "cart:172.28.0.12"
+      - "order:172.28.0.13"
+      - "identityserver:172.28.0.14"
+      - "yarpapigateway:172.28.0.15"
+      - "rabbitmq:172.28.0.16"
+      - "redis:172.28.0.17"
 
   yarpapigateway:
     container_name: yarpapigateway
     hostname: yarpapigateway
     environment:
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/usr/local/share/ca-certificates/server.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/certs/tls-yarpapigateway.pfx
       - ASPNETCORE_Kestrel__Certificates__Default__Password=duranxpassword
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTPS_PORTS=6064
       - openiddict__issuer=https://identityserver:6066/
       - jwtbearer__authority=https://identityserver:6066/
-      - jwtbearer__certificates__signing__path=/usr/local/share/ca-certificates/server.pfx
+      - jwtbearer__certificates__signing__path=/certs/openid-signing.pfx
       - jwtbearer__certificates__signing__password=duranxpassword
-      - jwtbearer__certificates__encryption__path=/usr/local/share/ca-certificates/server-encryption.pfx
+      - jwtbearer__certificates__encryption__path=/certs/openid-encryption.pfx
       - jwtbearer__certificates__encryption__password=duranxpassword
+      - ReverseProxy__Clusters__inventory-cluster__Destinations__destination1__Address=https://inventory:6060
+      - ReverseProxy__Clusters__cart-cluster__Destinations__destination1__Address=https://cart:6061
+      - ReverseProxy__Clusters__order-cluster__Destinations__destination1__Address=https://order:6063
     depends_on:
       - inventory.api
       - cart.api
@@ -359,6 +384,9 @@ services:
       - "6064:6064"
       - "4022:4020"
     volumes:
+      - ./Certificates/tls-yarpapigateway.pfx:/certs/tls-yarpapigateway.pfx:ro
+      - ./Certificates/openid-signing.pfx:/certs/openid-signing.pfx:ro
+      - ./Certificates/openid-encryption.pfx:/certs/openid-encryption.pfx:ro
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
     networks:

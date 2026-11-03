@@ -1,6 +1,9 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+USER root
+COPY Certificates/duranx-ca-trust.crt /usr/local/share/ca-certificates/duranx-ca-trust.crt
+RUN update-ca-certificates
 USER app
 WORKDIR /app
 EXPOSE 6060
@@ -29,9 +32,9 @@ USER root
 
 WORKDIR /app
 # Copiar el certificado CRT al contenedor
-COPY Certificates/ /usr/local/share/ca-certificates/
+# La CA publica se instala en la etapa base.
 
-# Actualizar el almacén de certificados de CA
+# Actualizar el almacÃ©n de certificados de CA
 RUN update-ca-certificates
 
 USER app
